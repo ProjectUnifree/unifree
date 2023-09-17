@@ -93,13 +93,13 @@ Here is what we need help with:
 
 * :exclamation: :exclamation: Migrate Unity assets to GoDot
 * :exclamation: :exclamation: Migrate Unity assets to Cocos2d
-* What other engineers should be implemented?
+* What other engines should be implemented?
 
 #### Source Migration
 
 * Experiment with ChatGPT prompts for better code translation
 * Add prompts/configs to migrate to Cocos2d
-* What other engineers should be implement?
+* What other engines should be implemented?
 
 #### Framework
 
