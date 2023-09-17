@@ -6,6 +6,7 @@
 
 * Scan source project and detect files eligible for migration
 * Use ChatGPT to translate `.cs` files into Godot scripts and Unreal 3D classes. Here is how sample translation looks:
+
 ```
   Unity                                                  | Godot                                   
   ------------------------------------------------------ | ------------------------------------------------------
@@ -46,20 +47,23 @@
 
 ## Installation and Usage
 
- | Key                           | Description                                                   
- | ----------------------------- | ------------------------------------------------------------- 
- | `<config_name>`               | Name of the migration. Currently supported: `godot`, `unreal`  
- | `<source_project_dir>`        | Absolute path of the project to migrate                       
- | `<destination_project_dir>`   | Absolute path of where results should be written              
+`launch.sh` (or `launch.bat` on windows) is the main script that downloads Unifree code, install python virtual
+environment, installs dependencies and launches the main program (`unifree/free.py`). It accepts following parameters:
 
-### OS X
+| Key                         | Description                                                   |
+|-----------------------------|---------------------------------------------------------------|
+| `<config_name>`             | Name of the migration. Currently supported: `godot`, `unreal` |
+| `<source_project_dir>`      | Absolute path of the project to migrate                       |
+| `<destination_project_dir>` | Absolute path of where results should be written              |
+
+### macOS
 
 ```
 brew install git python3
 curl -0 https://raw.githubusercontent.com/ProjectUnifree/unifree/main/launch.sh | bash
 OPENAI_API_KEY=<your_openai_api_key>  ./launch.sh <config_name> <source_project_dir> <destination_project_dir>
 ```
- 
+
 ### Windows
 
 Install Git for Windows https://git-scm.com/download/win, then run:
@@ -78,12 +82,11 @@ curl -0 https://raw.githubusercontent.com/ProjectUnifree/unifree/main/launch.sh 
 OPENAI_API_KEY=<your_openai_api_key> ./launch.sh <config_name> <source_project_dir> <destination_project_dir>
 ```
 
-
 ### Call To Action
 
 :wave: Join our [Discord server](https://discord.gg/Ee5wJ4JWBQ) for a live discussion!
 
-We are actively seeking for contributors. If are familiar with Unity, Godot, Cocos2d or any other engineers, help us!
+We are actively seeking contributors. If you are familiar with Unity, Godot, Cocos2d or any other engines, help us!
 
 Here is what we need help with:
 
