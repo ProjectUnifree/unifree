@@ -19,7 +19,7 @@ setup_defaults()
     export VENV_DIR="${VENV_DIR:-${CLONE_DIR}/venv}"
 
     # TODO: move this to the https repo once it is public
-    export PROJECT_GIT_URL="${PROJECT_GIT_URL:-git@github.com:7MinuteGames/unifree.git}"
+    export PROJECT_GIT_URL="${PROJECT_GIT_URL:-git@github.com:ProjectUnifree/unifree.git}"
 
     # TODO: move this to the release branch or tag once it is public
     export PROJECT_GIT_BRANCH="${PROJECT_GIT_URL:-main}"

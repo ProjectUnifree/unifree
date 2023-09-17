@@ -58,8 +58,8 @@ Migrate Unity projects to other engines!
 
 ```
 brew install git python3
-curl -0 https://github.com/ProjectUnifree/unifree/main/launch_macos.sh | bash
-OPENAI_API_KEY=<your_openai_api_key>  ./launch_macos.sh <config_name> <source_project_dir> <destination_project_dir>
+curl -0 https://raw.githubusercontent.com/ProjectUnifree/unifree/main/launch.sh | bash
+OPENAI_API_KEY=<your_openai_api_key>  ./launch.sh <config_name> <source_project_dir> <destination_project_dir>
 ```
  
 ### Windows
@@ -69,15 +69,15 @@ Install Git for Windows https://git-scm.com/download/win, then run:
 ```
 git clone https://github.com/ProjectUnifree/unifree
 cd unifree
-launch_windows.bat <your_openai_api_key> <config_name> <source_project_dir> <destination_project_dir>
+launch.bat <your_openai_api_key> <config_name> <source_project_dir> <destination_project_dir>
 ```
 
 ### Ubuntu/Debian
 
 ```
 sudo apt install git python3 python3-venv
-curl -0 https://github.com/ProjectUnifree/unifree/main/launch_linux.sh | bash
-OPENAI_API_KEY=<your_openai_api_key> ./launch_linux.sh <config_name> <source_project_dir> <destination_project_dir>
+curl -0 https://raw.githubusercontent.com/ProjectUnifree/unifree/main/launch.sh | bash
+OPENAI_API_KEY=<your_openai_api_key> ./launch.sh <config_name> <source_project_dir> <destination_project_dir>
 ```
 
 

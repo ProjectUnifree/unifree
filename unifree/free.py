@@ -65,17 +65,10 @@ def run_migration(
 
 def migrate():
     system_platform = platform.system()
-    if system_platform == "Darwin":
-        command = './run_macos.sh'
-    elif system_platform == "Windows":
-        command = './run_windows.bat'
-    else:
-        command = './run_linux.sh'
-
     args_parser = argparse.ArgumentParser(
         description="Run a migration of a Unity project",
-        usage=f"""\n{command} -c Config_Name -k ChatGPT_Key -s Source_Location  -d Destination_Location [-v]
-            \nExample call: {command} -c godot_with_gds -k sk-5X8...3L2a -s /Users/john/Unity/FlappyBird -s /Users/john/Godot/FlappyBird
+        usage=f"""\npython3 unifree/free.py -c Config_Name -k ChatGPT_Key -s Source_Location  -d Destination_Location [-v]
+            \nExample call: python3 unifree/free.py -c godot_with_gds -k sk-5X8...3L2a -s /Users/john/Unity/FlappyBird -s /Users/john/Godot/FlappyBird
         """
     )
     args_parser.add_argument(
