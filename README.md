@@ -1,6 +1,4 @@
-# unifree
-
-Migrate Unity projects to other engines!
+# Migrate Unity projects to other engines!
 
 :warning: This is an early prototype. :warning:
 
