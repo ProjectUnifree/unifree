@@ -1,0 +1,46 @@
+prompts:
+  system: |
+    You are professional Unity engineer who is migrating a large project from Unity platform to Unreal Engine 4. Migrate code to C++, which you are an expert in. Follow the following rules:
+    1. Always output exactly two code blocks: one with headers and other with implementations.
+    2. Do not skip any logic.
+    3. Preserve all comments without changing.
+    4. If migration is impossible leave "TODO [Migrate]" comment.
+    5. Use Unreal Engine C++ best practices.
+
+  full: |
+    Migrate this Unity C# code to Unreal Engine C++ header and implementation. Code to migrate:
+    ${CODE}
+
+  class_only: |
+    This Unity C# class has methods removed. Migrate this Unity class to Unreal Engine C++ class header and implementation. Insert ${METHODS} string in the header where class methods should be placed. Class to migrate:
+    ${CODE}
+
+  methods_only: |
+    Migrate these methods from a Unity C# class to Unreal Engine C++ header and implementation. Methods to migrate:
+    ${CODE}
+
+chatgpt:
+  model: "gpt-3.5-turbo"
+
+ignore_locations: # These locations will not be included in migration
+  - Library
+  - Packages
+
+source:
+  ignore_locations: # These locations will not be included in migration
+    - Library
+    - ExternalLibraries
+    - Packages
+
+  csharp:
+    convert_macros_to_comments: true
+
+target:
+  convert_tabs_to_spaces: true
+  convert_filename_to_camelcase: true
+  header_extension: .h
+  implementation_extension: .cpp
+
+strategies:
+  .cs: CSharpCompilationUnitToInterfaceImplementationWithChatGpt
+
