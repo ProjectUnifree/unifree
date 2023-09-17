@@ -18,11 +18,8 @@ setup_defaults()
     export USE_VENV="${USE_VENV:-true}"
     export VENV_DIR="${VENV_DIR:-${CLONE_DIR}/venv}"
 
-    # TODO: move this to the https repo once it is public
-    export PROJECT_GIT_URL="${PROJECT_GIT_URL:-git@github.com:ProjectUnifree/unifree.git}"
-
-    # TODO: move this to the release branch or tag once it is public
-    export PROJECT_GIT_BRANCH="${PROJECT_GIT_URL:-main}"
+    export PROJECT_GIT_URL="${PROJECT_GIT_URL:-https://github.com/ProjectUnifree/unifree.git}"
+    export PROJECT_GIT_BRANCH="${PROJECT_GIT_BRANCH:-main}"
 
     export GIT_CMD="${GIT_CMD:-git}"
     export PYTHON_CMD="${PYTHON_CMD:-python3}"
