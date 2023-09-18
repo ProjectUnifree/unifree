@@ -52,6 +52,7 @@ environment, installs dependencies and launches the main program (`unifree/free.
 
 | Key                         | Description                                                   |
 |-----------------------------|---------------------------------------------------------------|
+| `<your_openai_api_key>`     | [How to get Open AI Key](https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key)|
 | `<config_name>`             | Name of the migration. Currently supported: `godot`, `unreal` |
 | `<source_project_dir>`      | Absolute path of the project to migrate                       |
 | `<destination_project_dir>` | Absolute path of where results should be written              |
@@ -61,7 +62,7 @@ environment, installs dependencies and launches the main program (`unifree/free.
 ```
 brew install git python3
 curl -0 https://raw.githubusercontent.com/ProjectUnifree/unifree/main/launch.sh | bash
-OPENAI_API_KEY=<your_openai_api_key>  ./launch.sh <config_name> <source_project_dir> <destination_project_dir>
+OPENAI_API_KEY=<your_openai_api_key> ./launch.sh <config_name> <source_project_dir> <destination_project_dir>
 ```
 
 ### Windows
