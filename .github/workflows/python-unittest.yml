@@ -1,6 +1,6 @@
 name: Python Unit Test
 
-# Run when PRs are made into main and after commits to main.
+# Run when PRs are made to merge into main and after commits to main.
 on:
   pull_request:
     branches:
@@ -27,4 +27,6 @@ jobs:
         run: $GITHUB_WORKSPACE/launch.sh
       - name: Test with unittest
         run: |
-          python -m unittest -v $GITHUB_WORKSPACE/tests/*.py >> $GITHUB_STEP_SUMMARY
+          # Store output in GITHUB_STEP_SUMMARY for easy reading on Github.com
+          python -m unittest -v $GITHUB_WORKSPACE/tests/*.py &> $GITHUB_STEP_SUMMARY
+          cat $GITHUB_STEP_SUMMARY
