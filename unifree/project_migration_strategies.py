@@ -68,7 +68,7 @@ class CreateMigrations(ConcurrentMigrationStrategy):
             self._map_file_path_to_migration, project_files,
             max_workers=int(cpu_count() // 2),
             unit='path',
-            chunksize=5,
+            chunksize=1,
         )
 
         warnings = []
@@ -158,7 +158,7 @@ class ExecuteMigrations(ConcurrentMigrationStrategy):
             self._execute_strategy, self._strategies,
             max_workers=cpu_count(),
             unit='file',
-            chunksize=5,
+            chunksize=1,
         )
 
         warnings = []
