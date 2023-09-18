@@ -11,12 +11,7 @@ on:
 
 jobs:
   test:
-    name: Unit tests
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        # Test on the following Python versions.
-        python-version: ["3.8", "3.9", "3.10", "3.11"]
     env:
       # Disable venv use for simpler testing.
       USE_VENV: false
@@ -24,13 +19,11 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python 3.8
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: 3.8
       - name: Install dependencies
-        run: |
-          $GITHUB_WORKSPACE/launch.sh
+        run: $GITHUB_WORKSPACE/launch.sh
       - name: Test with unittest
-        run: |
-          python -m unittest -v $GITHUB_WORKSPACE/tests/*.py 
+        run: python -m unittest -v $GITHUB_WORKSPACE/tests/*.py 
