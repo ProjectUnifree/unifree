@@ -26,4 +26,5 @@ jobs:
       - name: Install dependencies
         run: $GITHUB_WORKSPACE/launch.sh
       - name: Test with unittest
-        run: python -m unittest -v $GITHUB_WORKSPACE/tests/*.py 
+        run: |
+          python -m unittest -v $GITHUB_WORKSPACE/tests/*.py >> $GITHUB_STEP_SUMMARY
