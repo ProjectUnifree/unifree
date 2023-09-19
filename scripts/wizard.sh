@@ -6,21 +6,6 @@ set -e
 # please use launch.sh.                 #
 #########################################
 
-# Welcome to Unifree! 
-# Please answer a few questions to start the migration.
-# What is your OpenAPI key? <... user input ...>
-
-# Full path of the source Unity project: <... user input ...>
-
-# What language would you like to translate it to?
-#     [1] godot
-#     [2] unreal
-# <... user input ...>
-
-# Full path of the destination {CONFIG_NAME} project: <... user input ...>
-
-# ... output of the script ...
-
 #########################################################
 # helper functions                                      #
 #########################################################
