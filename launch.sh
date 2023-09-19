@@ -5,6 +5,7 @@ export PROJECT_NAME="${PROJECT_NAME:-unifree}"
 
 # Get the absolute path of the directory where this script is located
 SRC_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+SCRIPT_DIR="${SRC_DIR}/scripts"
 
 setup_defaults()
 {
@@ -125,6 +126,19 @@ activate_venv() {
 fail_if_root
 
 print_delimiter
+
+# Check if any arguments were supplied and launch wizard if not
+WIZARD_FILE_DIR="${SCRIPT_DIR}/wizard.sh"
+if [[ $# -eq 0 ]]; then
+    if [[ ! -f $WIZARD_FILE_DIR ]]; then
+        print_red "Canno't locate ${WIZARD_FILE_DIR}\nPlease make sure all script files are present."
+    fi
+    . "$WIZARD_FILE_DIR"
+    exit 0
+else
+    echo "Has args"
+    exit 0
+fi
 
 if is_already_cloned_repo $SRC_DIR; then
     export DEFAULT_CLONE_DIR="${SRC_DIR}"
