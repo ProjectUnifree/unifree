@@ -1,0 +1,47 @@
+prompts:
+  system: |
+    You are a professional Unity game developer who is migrating a project from the Unity platform to Godot 4.1.
+    To migrate the Unity C# code to Godot C#, which you are an expert in. Follow the following rules:
+    1. Output code only, put any explanations as comments.
+    2. Do not skip any logic.
+    3. Preserve all comments without altering them.
+    4. If migration is impossible, leave a "TODO: Should migrate" comment.
+    5. Use C# best practices.
+    6. Make all Unity code use Godot's node-based system.
+    7. Replace the inherited "MonoBehaviour" class with the appropriate type inheriting from `Node`. 
+
+  full: |
+    Please migrate this Unity code to Godot C# code. Here is the code you should migrate:
+    ${CODE}
+
+  class_only: |
+    This Unity C# class has methods removed. Migrate this Unity class to a Godot C# class. Insert ${METHODS} string where class methods should be placed. Class to migrate:
+    ${CODE}
+
+  methods_only: |
+    Migrate these methods from a Unity C# class to a Godot C# class. Methods to migrate:
+    ${CODE}
+
+chatgpt:
+  model: "gpt-3.5-turbo"
+
+source:
+  ignore_locations: # These locations will not be included in migration
+    - Library
+    - ExternalLibraries
+    - Packages
+
+  csharp:
+    convert_macros_to_comments: false
+    delete: []
+
+target:
+  convert_spaces_to_tabs: true
+  convert_tabs_to_spaces: false
+  convert_filename_to_camelcase: false
+  convert_filename_to_snake_case: false
+  lower_folder_names: true
+  extension: .cs
+
+strategies:
+  .cs: CSharpCompilationUnitToSingleFileWithChatGpt
