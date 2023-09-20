@@ -36,11 +36,10 @@ print_green "Please answer a couple of questions so that we can get you started!
 
 # Ask for OpenAPI Key
 if [[ -z "$OPENAI_API_KEY" ]]; then
-    while [[ $OPENAI_API_KEY_TMP = "" ]]; do
+    while [[ $OPENAI_API_KEY = "" ]]; do
         print_user_input_query "What is your OpenAPI key?"
-        read OPENAI_API_KEY_TMP
+        read OPENAI_API_KEY
     done
-    OPENAI_API_KEY="${OPENAI_API_KEY_TMP}"
 else
     print_user_input_query "What is your OpenAPI key?" "${OPENAI_API_KEY}"
     read OPENAI_API_KEY_TMP
