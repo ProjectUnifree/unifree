@@ -71,7 +71,7 @@ goto Start
         echo %PYTHON_CMD% is not found.
 
         if "%TEST_OTHER_PYTHON_PATH%"=="true" (
-            echo Try with py
+            echo Checking if python is available as py...
             where py >nul 2>&1
             if !errorlevel! neq 0 (
                 echo py is not found.
