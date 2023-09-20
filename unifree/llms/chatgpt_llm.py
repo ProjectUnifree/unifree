@@ -10,7 +10,19 @@ from unifree import LLM, log, QueryHistoryItem
 
 class ChatGptLLM(LLM):
     """
-    This class adds a capability to query chat GPT for a completion
+    This class adds a capability to query chat GPT for a completion.
+
+    The configuration looks like:
+
+    ```
+    llm:
+      class: ChatGptLLM
+      config:
+          secret_key: <INSERTED DYNAMICALLY BY free.py>
+          model: gpt-4
+          max_tokens: 4000
+    ```
+
     """
     _config: Dict
 

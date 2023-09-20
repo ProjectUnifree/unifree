@@ -9,6 +9,23 @@ from unifree.utils import load_llm
 
 
 class MultiprocessLocalLLM(LLM):
+    """
+    This class wraps an LLM implementation and run inference (aka 'query' method) in separate processes on the local box.
+
+    The configuration would look like:
+
+    ```
+    llm:
+      class: MultiprocessLocalLLM
+      llm_config:
+          class: <wrapped LLM class>
+          config <wrapped LLM config>
+
+        wrapper_config
+          num_workers: 5,
+          query_timeout_sec: 10
+    ```
+    """
     _shared_executor: Optional[ProcessPoolExecutor] = None
     _query_timeout_sec: int = 20
 

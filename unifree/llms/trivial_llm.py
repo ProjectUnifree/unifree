@@ -7,7 +7,15 @@ from unifree import LLM, QueryHistoryItem
 
 class TrivialLLM(LLM):
     """
-    This is a trivial implementation of an LLM used for unit tests and an example for other implementations
+    This is a trivial implementation of an LLM used for unit tests and an example for other implementations.
+
+    The configuration looks like:
+
+    ```
+    llm:
+      class: TrivialLLM
+      config:
+    ```
     """
 
     def __init__(self, config: Dict) -> None:
