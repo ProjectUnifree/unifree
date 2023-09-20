@@ -47,12 +47,12 @@
 
 ## Installation and Usage
 
-`launch.sh` (or `launch.bat` on windows) is the main script that downloads Unifree code, install python virtual
+`launch.sh` (or `launch.bat` on windows) is the main script that downloads Unifree code, installs a python virtual
 environment, installs dependencies and launches the main program (`unifree/free.py`). It accepts following parameters:
 
 | Key                         | Description                                                   |
 |-----------------------------|---------------------------------------------------------------|
-| `<your_openai_api_key>`     | [How to get Open AI Key](https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key)|
+| `<your_openai_api_key>`     | [How to get an OpenAI API Key](https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key)|
 | `<config_name>`             | Name of the migration. Currently supported: `godot`, `unreal` |
 | `<source_project_dir>`      | Absolute path of the project to migrate                       |
 | `<destination_project_dir>` | Absolute path of where results should be written              |
