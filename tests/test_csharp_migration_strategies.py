@@ -3,11 +3,55 @@
 import os
 import re
 import unittest
-from typing import List, Dict, TypeVar, Callable
+from typing import Dict, TypeVar, Optional, List, Any
 
 import unifree
-from unifree.csharp_migration_strategies import CSharpCompilationUnitMigrationStrategy, CSharpCompilationUnitToSingleFileWithChatGpt
+from unifree import LLM, QueryHistoryItem
+from unifree.csharp_migration_strategies import CSharpCompilationUnitMigrationStrategy, CSharpCompilationUnitMigrationWithLLM, CSharpCompilationUnitToSingleFileWithLLM
+from unifree.llms import TrivialLLM
 from unifree.utils import to_default_dict
+
+
+class CSharpCompilationUnitMigrationWithLLMProxy(CSharpCompilationUnitMigrationWithLLM):
+    def execute(self) -> None:
+        pass
+
+    def load_llm(self) -> unifree.LLM:
+        return TrivialLLM()
+
+
+class TestCSharpCompilationUnitMigrationWithLLM(unittest.TestCase):
+    def test_create_code_prompt(self):
+        strategy = CSharpCompilationUnitMigrationWithLLMProxy(unifree.FileMigrationSpec('', '', ''), to_default_dict({
+            "prompts": {
+                "test": "This is a ${CODE}"
+            }
+        }))
+
+        self.assertTrue("This is a test with 01010", strategy.create_code_prompt('test', "01010"))
+
+    def test_create_prompt(self):
+        strategy = CSharpCompilationUnitMigrationWithLLMProxy(unifree.FileMigrationSpec('', '', ''), to_default_dict({
+            "prompts": {
+                "test": "This is a ${TEST} with ${MACRO}"
+            }
+        }))
+
+        self.assertTrue("This is a test with ${MACRO}", strategy.create_prompt('test', {"TEST": "test"}))
+        self.assertTrue("This is a test with 111", strategy.create_prompt('test', {"TEST": "test", "MACRO": "111"}))
+
+    def test_create_prompt_missing(self):
+        strategy = CSharpCompilationUnitMigrationWithLLMProxy(unifree.FileMigrationSpec('', '', ''), to_default_dict({
+            "prompts": {
+                "test": "This is a ${TEST} with ${MACRO}"
+            }
+        }))
+
+        try:
+            strategy.create_prompt('missing', {})
+            self.fail("Exception should have been thrown")
+        except RuntimeError:
+            pass  # expected
 
 
 class CSharpCompilationUnitMigrationStrategyProxy(CSharpCompilationUnitMigrationStrategy):
@@ -169,7 +213,7 @@ class TestCSharpCompilationUnitMigrationStrategy(unittest.TestCase):
         _setup_test_config(cls)
 
 
-class CSharpCompilationUnitToSingleFileWithChatGptProxy(CSharpCompilationUnitToSingleFileWithChatGpt):
+class CSharpCompilationUnitToSingleFileWithLLMProxy(CSharpCompilationUnitToSingleFileWithLLM):
     saved_content: str
     saved_path: str
 
@@ -177,24 +221,35 @@ class CSharpCompilationUnitToSingleFileWithChatGptProxy(CSharpCompilationUnitToS
 
     ResultType = TypeVar('ResultType')
 
-    def translate_code_in_chatgpt(self, code: str, prompt_type: str, system: str, extractor_fn: Callable[[str], ResultType]) -> ResultType:
-        self.batch_count += 1
-        return f"TRANSLATED {prompt_type} {self.batch_count}"
-
     def save_content(self, content: str, target_file_path: str):
         self.saved_content = content
         self.saved_path = target_file_path
 
-    @classmethod
-    def fits_in_one_translation(cls, source_text: str) -> bool:
-        return len(source_text) < 1_000
+    def load_llm(self) -> LLM:
+        class LocalLLM(LLM):
+            _parent: Any
+
+            def query(self, user: str, system: Optional[str] = None, history: Optional[List[QueryHistoryItem]] = None) -> str:
+                self._parent.batch_count += 1
+                return f"TRANSLATED {user} {self._parent.batch_count}"
+
+            def fits_in_one_prompt(self, token_count: int) -> bool:
+                return token_count < 1_000
+
+            def count_tokens(self, source_text: str) -> int:
+                return len(source_text)
+
+        local_llm = LocalLLM()
+        local_llm._parent = self
+
+        return local_llm
 
 
-class TestCSharpCompilationUnitToSingleFileWithChatGpt(unittest.TestCase):
+class TestCSharpCompilationUnitToSingleFileWithLLM(unittest.TestCase):
     config: Dict
 
     def test_execute_small_file(self):
-        strategy = CSharpCompilationUnitToSingleFileWithChatGptProxy(_load_file_migration_spec('ShortClassNoNamespace.cs'), self.config)
+        strategy = CSharpCompilationUnitToSingleFileWithLLMProxy(_load_file_migration_spec('ShortClassNoNamespace.cs'), self.config)
         strategy.execute()
 
         self.assertEqual("TRANSLATED full 1", strategy.saved_content)
@@ -206,7 +261,7 @@ class TestCSharpCompilationUnitToSingleFileWithChatGpt(unittest.TestCase):
         for ix in range(2, 45):
             expected_class += f"\nTRANSLATED methods_only {ix}\n"
 
-        strategy = CSharpCompilationUnitToSingleFileWithChatGptProxy(_load_file_migration_spec('LongClassWithNamespace.cs'), self.config)
+        strategy = CSharpCompilationUnitToSingleFileWithLLMProxy(_load_file_migration_spec('LongClassWithNamespace.cs'), self.config)
         strategy.execute()
 
         self.assertEqual(_normalize_definition(expected_class), _normalize_definition(strategy.saved_content))
@@ -254,9 +309,11 @@ def _setup_test_config(target) -> None:
             "extension": ".gd"
         },
         "prompts": {
-            "system": "System Prompt"
+            "system": "System Prompt",
+            "full": "full",
+            "class_only": "class_only",
+            "methods_only": "methods_only",
         }
-
     })
 
 

@@ -21,7 +21,7 @@ def run_migration(
 
     try:
         config = utils.load_config(config)
-        config["chatgpt"]["key"] = open_ai_key
+        config["openai_key"] = open_ai_key
         config["verbose"] = verbose
     except Exception as e:
         log.error(f"Unable to start: {config} is invalid: {e}", exc_info=e)
