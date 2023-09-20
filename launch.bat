@@ -30,7 +30,7 @@ echo.
 set CONFIG_NAME=%1
 set OPENAI_API_KEY=%2
 set ORIGIN_DIR=%3
-set DEST_DIR=%3
+set DEST_DIR=%4
 
 set USAGE_MSG="Usage: %0 <openai_api_key> <config_name> <source_dir> <dest_dir>"
 
