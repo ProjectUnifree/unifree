@@ -9,6 +9,11 @@ You can use this tool to help aid migration by providing you with a base, but yo
 #### Godot Engine
 If you wish to migrate manually to Godot: [YouTube migration guides](https://www.youtube.com/results?search_query=Migrate+from+Unity+to+Godot), [Godot docs](https://docs.godotengine.org/en/stable/) _(very helpful!)_, [Discord server](https://discord.gg/4JBkykG) _(for any burning questions you can't find answers to online)_
 
+These other tools would also be very helpful!:
+- [UnityGLTF _(Unity 3D models to Godot models)_](https://github.com/KhronosGroup/UnityGLTF)
+- [Unidot Importer](https://github.com/V-Sekai/unidot_importer) and [UnityPackage Godot](https://github.com/barcoderdev/unitypackage_godot) _(Unity assets to Godot assets)_
+(some of these projects may be merged into Unifree, but are not currently)
+
 #### Unreal Engine
 If you wish to migrate manually to Unreal Engine: [helpful UE tutorials](https://www.youtube.com/results?search_query=Unreal+Engine+basics+%22(for+Unity+developers)%22), [Unreal Engine docs](https://docs.unrealengine.com/5.3/en-US/unreal-engine-for-unity-developers/) _(very helpful!)_, [Semi-official Discord server](https://discord.com/invite/unreal-slackers) _(for any burning questions you can't find answers to online)_
 
