@@ -204,8 +204,7 @@ print_delimiter
 WIZARD_FILE_DIR="${SCRIPT_DIR}/wizard.sh"
 if [[ $# -eq 0 ]]; then
     if [[ ! -f $WIZARD_FILE_DIR ]]; then
-        print_red "Canno't locate ${WIZARD_FILE_DIR}\nPlease make sure all script files are present."
-        exit 1
+        print_red "Cannot locate ${WIZARD_FILE_DIR}.\nPlease make sure all script files are present."
     fi
     . "$WIZARD_FILE_DIR"
 fi
