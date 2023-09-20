@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -e
-#########################################
-#               Please Read!            #
-# This script will not run standalone,  #
-# please use launch.sh.                 #
-#########################################
+########################################
+#             Please Read!             #
+# This script will not run standalone, #
+# please use launch.sh.                #
+########################################
 
 #########################################################
 # helper functions                                      #
