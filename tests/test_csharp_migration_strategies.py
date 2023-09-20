@@ -17,7 +17,7 @@ class CSharpCompilationUnitMigrationWithLLMProxy(CSharpCompilationUnitMigrationW
         pass
 
     def load_llm(self) -> unifree.LLM:
-        return TrivialLLM()
+        return TrivialLLM(self.config)
 
 
 class TestCSharpCompilationUnitMigrationWithLLM(unittest.TestCase):
@@ -25,6 +25,9 @@ class TestCSharpCompilationUnitMigrationWithLLM(unittest.TestCase):
         strategy = CSharpCompilationUnitMigrationWithLLMProxy(unifree.FileMigrationSpec('', '', ''), to_default_dict({
             "prompts": {
                 "test": "This is a ${CODE}"
+            },
+            "llm": {
+                "class": "TrivialLLM"
             }
         }))
 
@@ -34,6 +37,9 @@ class TestCSharpCompilationUnitMigrationWithLLM(unittest.TestCase):
         strategy = CSharpCompilationUnitMigrationWithLLMProxy(unifree.FileMigrationSpec('', '', ''), to_default_dict({
             "prompts": {
                 "test": "This is a ${TEST} with ${MACRO}"
+            },
+            "llm": {
+                "class": "TrivialLLM"
             }
         }))
 
@@ -44,7 +50,11 @@ class TestCSharpCompilationUnitMigrationWithLLM(unittest.TestCase):
         strategy = CSharpCompilationUnitMigrationWithLLMProxy(unifree.FileMigrationSpec('', '', ''), to_default_dict({
             "prompts": {
                 "test": "This is a ${TEST} with ${MACRO}"
+            },
+            "llm": {
+                "class": "TrivialLLM"
             }
+
         }))
 
         try:
@@ -239,6 +249,9 @@ class CSharpCompilationUnitToSingleFileWithLLMProxy(CSharpCompilationUnitToSingl
             def count_tokens(self, source_text: str) -> int:
                 return len(source_text)
 
+            def initialize(self) -> None:
+                pass
+
         local_llm = LocalLLM()
         local_llm._parent = self
 
@@ -313,6 +326,9 @@ def _setup_test_config(target) -> None:
             "full": "full",
             "class_only": "class_only",
             "methods_only": "methods_only",
+        },
+        "llm": {
+            "class": "TrivialLLM"
         }
     })
 

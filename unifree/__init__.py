@@ -61,6 +61,12 @@ class LLM(ABC):
         """
         raise NotImplementedError
 
+    def initialize(self) -> None:
+        """
+        Initialize the LLM
+        """
+        raise NotImplementedError
+
     def fits_in_one_prompt(self, token_count: int) -> bool:
         """
         Check if the given token count fits into one prompt
