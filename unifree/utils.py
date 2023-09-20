@@ -20,7 +20,7 @@ def load_config(config_name: str) -> Dict[str, Any]:
 
     if not os.path.exists(config_file_name) or not os.path.isfile(config_file_name):
         supported_destinations = []
-        for config_file_name in os.listdir("config/"):
+        for config_file_name in os.listdir("configs/"):
             if config_file_name.endswith(".yaml"):
                 supported_destinations.append(config_file_name.replace(".yaml", ""))
 
