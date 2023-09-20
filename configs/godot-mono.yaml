@@ -22,8 +22,11 @@ prompts:
     Migrate these methods from a Unity C# class to a Godot C# class. Methods to migrate:
     ${CODE}
 
-chatgpt:
-  model: "gpt-3.5-turbo"
+llm:
+  class: ChatGptLLM
+  config:
+    model: "gpt-3.5-turbo"
+    max_tokens: 4000
 
 source:
   ignore_locations: # These locations will not be included in migration
@@ -33,7 +36,7 @@ source:
 
   csharp:
     convert_macros_to_comments: false
-    delete: []
+    delete: [ ]
 
 target:
   convert_spaces_to_tabs: true
@@ -44,4 +47,4 @@ target:
   extension: .cs
 
 strategies:
-  .cs: CSharpCompilationUnitToSingleFileWithChatGpt
+  .cs: CSharpCompilationUnitToSingleFileWithLLM

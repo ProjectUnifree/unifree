@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-# Copyright (c) AppLovin. and its affiliates. All rights reserved.
+
+# Copyright (c) Unifree
+# This code is licensed under MIT license (see LICENSE.txt for details)
+
 import logging
 import sys
 import traceback
@@ -38,3 +41,7 @@ def error(message: str, exc_info=False) -> None:
         traceback.print_exc(file=sys.stderr)
 
     py_logger.error(message, exc_info=exc_info)
+
+
+def is_debug():
+    return unifree.log_level == 'debug'

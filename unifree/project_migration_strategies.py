@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
-# Copyright (c) AppLovin. and its affiliates. All rights reserved.
+
+# Copyright (c) Unifree
+# This code is licensed under MIT license (see LICENSE.txt for details)
+
 import os.path
 from abc import ABC
-from multiprocessing import cpu_count
 from typing import List, Union, Dict, Optional, Iterable
 
-from tqdm.contrib.concurrent import process_map
+from tqdm.contrib.concurrent import thread_map
 
 from unifree import log, MigrationStrategy, utils, FileMigrationSpec
 
@@ -16,11 +18,7 @@ class ConcurrentMigrationStrategy(MigrationStrategy, ABC):
         super().__init__(config)
 
     def map_concurrently(self, fn, iterables, **tqdm_kwargs) -> Iterable:
-        # Run verbose mode jobs in a single thread
-        if self.config["verbose"]:
-            return map(fn, iterables)
-        else:
-            return process_map(fn, iterables, **tqdm_kwargs)
+        return thread_map(fn, iterables, **tqdm_kwargs)
 
 
 class CreateMigrations(ConcurrentMigrationStrategy):
@@ -66,7 +64,6 @@ class CreateMigrations(ConcurrentMigrationStrategy):
         log.info(f"Computing migration strategies for {len(project_files):,} files...")
         results = self.map_concurrently(
             self._map_file_path_to_migration, project_files,
-            max_workers=int(cpu_count() // 2),
             unit='path',
             chunksize=1,
         )
@@ -156,7 +153,6 @@ class ExecuteMigrations(ConcurrentMigrationStrategy):
 
         results = self.map_concurrently(
             self._execute_strategy, self._strategies,
-            max_workers=cpu_count(),
             unit='file',
             chunksize=1,
         )

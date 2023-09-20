@@ -19,8 +19,11 @@ prompts:
     Migrate these methods from a Unity C# class to Unreal Engine C++ header and implementation. Methods to migrate:
     ${CODE}
 
-chatgpt:
-  model: "gpt-3.5-turbo"
+llm:
+  class: ChatGptLLM
+  config:
+    model: "gpt-3.5-turbo"
+    max_tokens: 4000
 
 ignore_locations: # These locations will not be included in migration
   - Library
@@ -42,5 +45,5 @@ target:
   implementation_extension: .cpp
 
 strategies:
-  .cs: CSharpCompilationUnitToInterfaceImplementationWithChatGpt
+  .cs: CSharpCompilationUnitToInterfaceImplementationWithLLM
 

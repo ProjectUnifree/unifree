@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-# Copyright (c) AppLovin. and its affiliates. All rights reserved.
+
+# Copyright (c) Unifree
+# This code is licensed under MIT license (see LICENSE.txt for details)
+
 import importlib
 import os
 import re
@@ -7,6 +10,8 @@ from collections import defaultdict
 from typing import Type, Dict, Any
 
 import yaml
+
+from unifree import LLM
 
 
 def load_config(config_name: str) -> Dict[str, Any]:
@@ -20,7 +25,7 @@ def load_config(config_name: str) -> Dict[str, Any]:
 
     if not os.path.exists(config_file_name) or not os.path.isfile(config_file_name):
         supported_destinations = []
-        for config_file_name in os.listdir("config/"):
+        for config_file_name in os.listdir("configs/"):
             if config_file_name.endswith(".yaml"):
                 supported_destinations.append(config_file_name.replace(".yaml", ""))
 
@@ -45,6 +50,11 @@ def load_class(class_name: str, module: str) -> Type:
         raise RuntimeError(f"Class {class_name} not found")
 
     return loaded_class
+
+
+def load_llm(config: Dict) -> LLM:
+    llm_class = load_class(config["class"], "llms")
+    return llm_class(config)
 
 
 def camel_to_snake(camel_case_str: str) -> str:

@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
-# Copyright (c) AppLovin. and its affiliates. All rights reserved.
+
+# Copyright (c) Unifree
+# This code is licensed under MIT license (see LICENSE.txt for details)
+
 import argparse
 import os.path
 import platform
 import sys
+from typing import Optional
 
 import unifree
 from unifree import utils, log
@@ -11,9 +15,9 @@ from unifree import utils, log
 
 def run_migration(
         config: str,
-        open_ai_key: str,
         source: str,
         destination: str,
+        llm_secret_key: Optional[str] = None,
         verbose: bool = False,
 ):
     if verbose:
@@ -21,19 +25,22 @@ def run_migration(
 
     try:
         config = utils.load_config(config)
-        config["chatgpt"]["key"] = open_ai_key
         config["verbose"] = verbose
+
+        if llm_secret_key and "llm" in config and "config" in config["llm"]:
+            config["llm"]["config"]["secret_key"] = llm_secret_key
+
     except Exception as e:
         log.error(f"Unable to start: {config} is invalid: {e}", exc_info=e)
-        return -1
+        return 78 # os.EX_CONFIG
 
     if not os.path.exists(source):
         log.error(f"Unable to start: source folder does not exist ('{source}')")
-        return -1
+        return 78 # os.EX_CONFIG
 
     if not os.path.isdir(source):
         log.error(f"Unable to start: source folder is not a folder ('{source}')")
-        return -1
+        return 78 # os.EX_CONFIG
 
     if os.path.exists(destination):
         log.info(f"Using existing destination folder '{destination}'")
@@ -44,7 +51,7 @@ def run_migration(
             os.makedirs(destination)
         except Exception as e:
             log.error(f"Unable to create destination folder '{destination}': {e}", exc_info=e)
-            return -1
+            return 74 # os.EX_IOERR
 
     from unifree.project_migration_strategies import CreateMigrations, ExecuteMigrations
 
@@ -57,10 +64,10 @@ def run_migration(
 
         log.info("Migration completed successfully")
 
-        return 0
+        return os.EX_OK
     except Exception as e:
         log.error(f"Unable to migrate: {e}", exc_info=e)
-        return -1
+        return 70 # os.EX_SOFTWARE
 
 
 def migrate():
@@ -78,12 +85,6 @@ def migrate():
         help=f"Name of the migration configuration. Must match file name in the ./configs folder",
     )
     args_parser.add_argument(
-        '--open_ai_key', '-k',
-        required=True,
-        type=str,
-        help=f"OpenAI API secret key. Obtain your key from 'https://platform.openai.com/account/api-keys'",
-    )
-    args_parser.add_argument(
         '--source', '-s',
         required=True,
         type=str,
@@ -96,6 +97,12 @@ def migrate():
         help=f"Path to the destination project folder. Migrated files would be stored there",
     )
     args_parser.add_argument(
+        '--llm_secret_key', '-k',
+        required=False,
+        type=str,
+        help=f"Secret key for the current LLM (optional)",
+    )
+    args_parser.add_argument(
         '--verbose', '-v',
         required=False,
         default=False,
@@ -106,7 +113,7 @@ def migrate():
         args, _ = args_parser.parse_known_args()
     except SystemExit:
         args_parser.print_usage()
-        sys.exit(-1)
+        sys.exit(78) # os.EX_CONFIG
 
     args = vars(args)
 
