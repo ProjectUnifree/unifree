@@ -21,6 +21,8 @@ set USE_VENV=true
 set PROJECT_GIT_URL="https://github.com/ProjectUnifree/unifree.git"
 set PROJECT_GIT_BRANCH=main
 set PYTHON_CMD=python.exe
+set TEST_OTHER_PYTHON_PATH=true
+
 
 :: #######################################################
 :: End of variables to override                          #
@@ -66,10 +68,22 @@ goto Start
     :: Check for python installation
     where "%PYTHON_CMD%" >nul 2>&1
     if %errorlevel% neq 0 (
-        echo Python is not found.
+        echo %PYTHON_CMD% is not found.
+
+        if "%TEST_OTHER_PYTHON_PATH%"=="true" (
+            echo Try with py
+            where py >nul 2>&1
+            if !errorlevel! neq 0 (
+                echo py is not found.
+            ) else (
+                echo Python is found via 'py' launcher.
+                set PYTHON_CMD=py
+                goto:Try_Install_Dependencies_pip
+            )
+        )
 
         where winget >nul 2>&1
-        if %errorlevel% neq 0 (
+        if !errorlevel! neq 0 (
             echo Please install Python and try again.
             set %~1=1
             goto:eof
@@ -78,6 +92,8 @@ goto Start
             winget install Python.Python.3.11
         )
     )
+
+:Try_Install_Dependencies_pip
 
     :: Check that pip is installed
     "%PYTHON_CMD%" -m ensurepip
