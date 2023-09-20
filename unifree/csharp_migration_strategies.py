@@ -2,13 +2,14 @@
 # Copyright (c) AppLovin. and its affiliates. All rights reserved.
 import os
 from abc import ABC
-from typing import Dict, Optional
+from typing import Dict, Optional, Callable, TypeVar
 
 import tree_sitter
 
-from unifree import log, MigrationStrategy, FileMigrationSpec, utils
-from unifree.chatgpt import ChatGptMixin
+from unifree import log, MigrationStrategy, FileMigrationSpec, utils, LLM
+from unifree.llms.code_extrators import extract_first_source_code, extract_header_implementation
 from unifree.source_code_parsers import CSharpCodeParser
+from unifree.utils import load_class
 
 
 class CSharpCompilationUnitMigrationStrategy(MigrationStrategy, ABC):
@@ -141,33 +142,73 @@ class CSharpCompilationUnitMigrationStrategy(MigrationStrategy, ABC):
         return s.replace("    ", "\t")
 
 
-class CSharpCompilationUnitToSingleFileWithChatGpt(CSharpCompilationUnitMigrationStrategy, ChatGptMixin):
+class CSharpCompilationUnitMigrationWithLLM(CSharpCompilationUnitMigrationStrategy, ABC):
+    _llm: LLM
+
+    def __init__(self, file_migration_spec: FileMigrationSpec, config: Dict) -> None:
+        super().__init__(file_migration_spec, config)
+
+        self._llm = self.load_llm()
+
+    @property
+    def llm(self) -> LLM:
+        return self._llm
+
+    ResultType = TypeVar('ResultType')
+
+    def translate_code(self, code: str, prompt_type: str, system: str, extractor_fn: Callable[[str], ResultType]) -> ResultType:
+        user = self.create_code_prompt(prompt_type, code)
+        response = self.llm.query(user, system)
+        return extractor_fn(response)
+
+    def create_code_prompt(self, prompt_type: str, code: str) -> str:
+        return self.create_prompt(prompt_type, {"CODE": code})
+
+    def create_prompt(self, prompt_type: str, replacements: Dict[str, str]) -> str:
+        text: str = self.config['prompts'][prompt_type]
+
+        if not text:
+            raise RuntimeError(f"Prompt '{prompt_type}' is not defined. Please confirm it is set in the destination YAML file under 'prompts'")
+
+        for key, value in replacements.items():
+            text = text.replace('${' + key + '}', value)
+
+        return text
+
+    def load_llm(self) -> LLM:
+        llm_class = load_class(self.config["llm"]["class"], "llms")
+        return llm_class(self.config)
+
+
+class CSharpCompilationUnitToSingleFileWithLLM(CSharpCompilationUnitMigrationWithLLM):
     def __init__(self, file_migration_spec: FileMigrationSpec, destination: Dict) -> None:
         super().__init__(file_migration_spec, destination)
 
     def execute(self) -> None:
         system = self.config['prompts']['system']
 
-        # Chat GPT is sometimes not very good at handling large input source code. So if a code is
+        # LLMs is sometimes not very good at handling large input source code. So if a code is
         # beyond a certain threshold, translate each method individually
-        if self.fits_in_one_translation(self.source_text):
-            response = self.translate_code_in_chatgpt(self.source_text, 'full', system, ChatGptMixin.extract_first_source_code)
+        token_count = self.llm.count_tokens(self.source_text)
+        if self.llm.fits_in_one_prompt(token_count):
+            response = self.translate_code(self.source_text, 'full', system, extract_first_source_code)
         else:
-            translated_class_only = self.translate_code_in_chatgpt(self.everything_except_method_declarations, 'class_only', system, ChatGptMixin.extract_first_source_code)
+            translated_class_only = self.translate_code(self.everything_except_method_declarations, 'class_only', system, extract_first_source_code)
 
             current_methods = ''
             translated_methods = ''
             for method_declaration in self.method_declarations:
                 updated_current_methods = current_methods + "\n\n" + method_declaration
 
-                if self.fits_in_one_translation(updated_current_methods):
+                token_count = self.llm.count_tokens(updated_current_methods)
+                if self.llm.fits_in_one_prompt(token_count):
                     current_methods = updated_current_methods
                 else:
-                    translated_methods += "\n\n" + self.translate_code_in_chatgpt(current_methods, 'methods_only', system, ChatGptMixin.extract_first_source_code)
+                    translated_methods += "\n\n" + self.translate_code(current_methods, 'methods_only', system, extract_first_source_code)
                     current_methods = method_declaration
 
             if len(current_methods) > 0:
-                translated_methods += "\n\n" + self.translate_code_in_chatgpt(current_methods, 'methods_only', system, ChatGptMixin.extract_first_source_code)
+                translated_methods += "\n\n" + self.translate_code(current_methods, 'methods_only', system, extract_first_source_code)
 
             if "${METHODS}" in translated_class_only:
                 response = translated_class_only.replace("${METHODS}", translated_methods)
@@ -184,30 +225,32 @@ class CSharpCompilationUnitToSingleFileWithChatGpt(CSharpCompilationUnitMigratio
         return f"[Migrate '{self.source_file_path}' to '{output_file_name}']"
 
 
-class CSharpCompilationUnitToInterfaceImplementationWithChatGpt(CSharpCompilationUnitMigrationStrategy, ChatGptMixin):
+class CSharpCompilationUnitToInterfaceImplementationWithLLM(CSharpCompilationUnitMigrationWithLLM):
     def execute(self) -> None:
         system = self.config['prompts']['system']
 
         # Chat GPT is sometimes not very good at handling large input source code. So if a code is
         # beyond a certain threshold, translate each method individually
-        if self.fits_in_one_translation(self.source_text):
-            header, implementation = self.translate_code_in_chatgpt(self.source_text, 'full', system, ChatGptMixin.extract_header_implementation)
+        token_count = self.llm.count_tokens(self.source_text)
+        if self.llm.fits_in_one_prompt(token_count):
+            header, implementation = self.translate_code(self.source_text, 'full', system, extract_header_implementation)
         else:
-            class_header, class_implementation = self.translate_code_in_chatgpt(self.everything_except_method_declarations, 'class_only', system, ChatGptMixin.extract_header_implementation)
+            class_header, class_implementation = self.translate_code(self.everything_except_method_declarations, 'class_only', system, extract_header_implementation)
 
             current_methods = ''
             method_headers, method_implementations = '', ''
 
             def translate_current_methods_and_append():
                 nonlocal current_methods, method_headers, method_implementations
-                translated_header, translated_implementation = self.translate_code_in_chatgpt(current_methods, 'methods_only', system, ChatGptMixin.extract_header_implementation)
+                translated_header, translated_implementation = self.translate_code(current_methods, 'methods_only', system, extract_header_implementation)
                 method_headers += "\n\n" + translated_header
                 method_implementations += "\n\n" + translated_implementation
 
             for method_declaration in self.method_declarations:
                 updated_current_methods = current_methods + "\n\n" + method_declaration
 
-                if self.fits_in_one_translation(updated_current_methods):
+                token_count = self.llm.count_tokens(updated_current_methods)
+                if self.llm.fits_in_one_prompt(token_count):
                     current_methods = updated_current_methods
                 else:
                     translate_current_methods_and_append()

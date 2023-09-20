@@ -21,19 +21,19 @@ def run_migration(
 
     try:
         config = utils.load_config(config)
-        config["chatgpt"]["key"] = open_ai_key
+        config["openai_key"] = open_ai_key
         config["verbose"] = verbose
     except Exception as e:
         log.error(f"Unable to start: {config} is invalid: {e}", exc_info=e)
-        return os.EX_CONFIG
+        return -1
 
     if not os.path.exists(source):
         log.error(f"Unable to start: source folder does not exist ('{source}')")
-        return os.EX_CONFIG
+        return -1
 
     if not os.path.isdir(source):
         log.error(f"Unable to start: source folder is not a folder ('{source}')")
-        return os.EX_CONFIG
+        return -1
 
     if os.path.exists(destination):
         log.info(f"Using existing destination folder '{destination}'")
@@ -44,7 +44,7 @@ def run_migration(
             os.makedirs(destination)
         except Exception as e:
             log.error(f"Unable to create destination folder '{destination}': {e}", exc_info=e)
-            return os.EX_IOERR
+            return -1
 
     from unifree.project_migration_strategies import CreateMigrations, ExecuteMigrations
 
@@ -57,10 +57,10 @@ def run_migration(
 
         log.info("Migration completed successfully")
 
-        return os.EX_OK
+        return 0
     except Exception as e:
         log.error(f"Unable to migrate: {e}", exc_info=e)
-        return os.EX_SOFTWARE
+        return -1
 
 
 def migrate():
@@ -106,7 +106,7 @@ def migrate():
         args, _ = args_parser.parse_known_args()
     except SystemExit:
         args_parser.print_usage()
-        sys.exit(os.EX_CONFIG)
+        sys.exit(-1)
 
     args = vars(args)
 
