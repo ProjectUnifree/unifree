@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-# Copyright (c) AppLovin. and its affiliates. All rights reserved.
+
+# Copyright (c) Unifree
+# This code is licensed under MIT license (see LICENSE.txt for details)
+
 import os.path
 from abc import ABC
 from typing import List, Union, Dict, Optional, Iterable

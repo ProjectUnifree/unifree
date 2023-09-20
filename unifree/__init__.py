@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-# Copyright (c) AppLovin. and its affiliates. All rights reserved.
+
+# Copyright (c) Unifree
+# This code is licensed under MIT license (see LICENSE.txt for details)
+
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Optional, Dict, List, Callable, TypeVar
