@@ -1,0 +1,32 @@
+name: Python Unit Test
+
+# Run when PRs are made to merge into main and after commits to main.
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      # Disable venv use for simpler testing.
+      USE_VENV: false
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.8
+      - name: Install dependencies
+        run: $GITHUB_WORKSPACE/launch.sh
+      - name: Test with unittest
+        run: |
+          # Store output in GITHUB_STEP_SUMMARY for easy reading on Github.com
+          python -m unittest -v $GITHUB_WORKSPACE/tests/*.py &> $GITHUB_STEP_SUMMARY
+          cat $GITHUB_STEP_SUMMARY

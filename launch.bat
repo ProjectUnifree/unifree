@@ -30,7 +30,7 @@ echo.
 set CONFIG_NAME=%1
 set OPENAI_API_KEY=%2
 set ORIGIN_DIR=%3
-set DEST_DIR=%3
+set DEST_DIR=%4
 
 set USAGE_MSG="Usage: %0 <openai_api_key> <config_name> <source_dir> <dest_dir>"
 
@@ -47,22 +47,22 @@ if exist "%CLONE_DIR%\.installed" (
     goto :run_main
 else (
     if "%OPENAI_API_KEY%"=="" (
-        echo %USAGE_MSG% 
+        echo %USAGE_MSG%
         exit /b 1
     )
 
     if "%CONFIG_NAME%"=="" (
-        echo %USAGE_MSG% 
+        echo %USAGE_MSG%
         exit /b 1
     )
 
     if "%ORIGIN_DIR%"=="" (
-        echo %USAGE_MSG% 
+        echo %USAGE_MSG%
         exit /b 1
     )
 
     if "%DEST_DIR%"=="" (
-        echo %USAGE_MSG% 
+        echo %USAGE_MSG%
         exit /b 1
     )
 )
@@ -151,28 +151,29 @@ echo %date% %time% > .installed
 echo Installation done
 
 if "%OPENAI_API_KEY%"=="" (
-	echo %USAGE_MSG% 
+	echo %USAGE_MSG%
 	exit /b 0
 )
 
 if "%CONFIG_NAME%"=="" (
-	echo %USAGE_MSG% 
+	echo %USAGE_MSG%
 	exit /b 0
 )
 
 if "%ORIGIN_DIR%"=="" (
-	echo %USAGE_MSG% 
+	echo %USAGE_MSG%
 	exit /b 0
 )
 
 if "%DEST_DIR%"=="" (
-	echo %USAGE_MSG% 
+	echo %USAGE_MSG%
 	exit /b 1
 )
 
 :run_main
 
 @echo on
+set PYTHONPATH=%PYTHONPATH%;.
 "%PYTHON_CMD%" "%CLONE_DIR%\unifree\free.py" -c "%CONFIG_NAME%" -k "%OPENAI_API_KEY%" -s "%ORIGIN_DIR%" -d "%DEST_DIR%"
 
 exit /b

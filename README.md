@@ -93,7 +93,7 @@ Here is what we need help with:
 
 #### Asset Migration
 
-* :exclamation: :exclamation: Migrate Unity assets to GoDot
+* :exclamation: :exclamation: Migrate Unity assets to Godot
 * :exclamation: :exclamation: Migrate Unity assets to Cocos2d
 * What other engines should be implemented?
 
