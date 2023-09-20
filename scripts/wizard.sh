@@ -81,8 +81,6 @@ while [[ $CONFIG_NAME = "" ]]; do
     fi
 done
 
-print_delimiter
-
 # Print all variables
 REQUIRED_PARAMS=("OPENAI_API_KEY" "ORIGIN_DIR" "DEST_DIR" "CONFIG_NAME")
 print_green "Parameters for launch:"
