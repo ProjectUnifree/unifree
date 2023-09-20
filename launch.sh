@@ -224,6 +224,7 @@ if [[ $# -eq 0 ]]; then
     . "$WIZARD_FILE_DIR"
 elif [[ -z "${ORIGIN_DIR}" ]]; then
     print_green "Installing only, run with ./launch.sh <config_name> <source_directory> <destination_directory>."
+    print_green "You can also run using the wizard with: ./launch.sh"
     exit 0
 fi
 
