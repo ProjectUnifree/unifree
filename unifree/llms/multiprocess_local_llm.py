@@ -32,20 +32,21 @@ class MultiprocessLocalLLM(LLM):
     _shared_executor: Optional[ProcessPoolExecutor] = None
     _query_timeout_sec: int = 20
 
-    _config: Dict
-    _local_uninitialized_model: Optional[LLM]
+    _local_model: Optional[LLM]
 
     def __init__(self, config: Dict) -> None:
-        super().__init__()
+        super().__init__(config)
 
-        self._config = config
+        self._local_model = None
 
     def initialize(self) -> None:
-        llm_config = self._config["llm_config"]
-        self._local_uninitialized_model = load_llm(llm_config)
+        llm_config = self.config["llm_config"]
+
+        self._local_model = load_llm(llm_config)
+        self._local_model.initialize()
 
     def query(self, user: str, system: Optional[str] = None, history: Optional[List[QueryHistoryItem]] = None) -> str:
-        self.maybe_initialize_shared_executor(self._config)
+        self.maybe_initialize_shared_executor(self.config)
 
         result_future = self._shared_executor.submit(_multi_process_worker_translate, _QueryRequest(
             user=user,
@@ -62,12 +63,12 @@ class MultiprocessLocalLLM(LLM):
             raise RuntimeError(f"LocalLLM query failed: {e}")
 
     def fits_in_one_prompt(self, token_count: int) -> bool:
-        assert self._local_uninitialized_model is not None
-        return self._local_uninitialized_model.fits_in_one_prompt(token_count)
+        assert self._local_model is not None
+        return self._local_model.fits_in_one_prompt(token_count)
 
     def count_tokens(self, source_text: str) -> int:
-        assert self._local_uninitialized_model is not None
-        return self._local_uninitialized_model.count_tokens(source_text)
+        assert self._local_model is not None
+        return self._local_model.count_tokens(source_text)
 
     @classmethod
     def maybe_initialize_shared_executor(cls, config: Dict):

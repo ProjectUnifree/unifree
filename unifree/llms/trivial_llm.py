@@ -22,7 +22,7 @@ class TrivialLLM(LLM):
     """
 
     def __init__(self, config: Dict) -> None:
-        super().__init__()
+        super().__init__(config)
 
     def query(self, user: str, system: Optional[str] = None, history: Optional[List[QueryHistoryItem]] = None) -> str:
         return user
