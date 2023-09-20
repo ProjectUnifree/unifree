@@ -6,7 +6,7 @@ from typing import Dict, Optional, Callable, TypeVar
 
 import tree_sitter
 
-from unifree import log, MigrationStrategy, FileMigrationSpec, utils, LLM
+from unifree import log, MigrationStrategy, FileMigrationSpec, utils, LLM, QueryHistoryItem
 from unifree.llms.code_extrators import extract_first_source_code, extract_header_implementation
 from unifree.source_code_parsers import CSharpCodeParser
 from unifree.utils import load_class
@@ -157,8 +157,20 @@ class CSharpCompilationUnitMigrationWithLLM(CSharpCompilationUnitMigrationStrate
     ResultType = TypeVar('ResultType')
 
     def translate_code(self, code: str, prompt_type: str, system: str, extractor_fn: Callable[[str], ResultType]) -> ResultType:
+        history = []
+        if "rules" in self.config["prompts"]:
+            for rule in self.config["prompts"]["rules"]:
+                history.append(QueryHistoryItem(
+                    role="user",
+                    content=rule
+                ))
+                history.append(QueryHistoryItem(
+                    role="assistant",
+                    content="Certainly! I have remembered this rule."
+                ))
+
         user = self.create_code_prompt(prompt_type, code)
-        response = self.llm.query(user, system)
+        response = self.llm.query(user, system, history)
         return extractor_fn(response)
 
     def create_code_prompt(self, prompt_type: str, code: str) -> str:

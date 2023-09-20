@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # Copyright (c) AppLovin. and its affiliates. All rights reserved.
+import json
 import os
 import re
 import unittest
@@ -52,6 +53,26 @@ class TestCSharpCompilationUnitMigrationWithLLM(unittest.TestCase):
             self.fail("Exception should have been thrown")
         except RuntimeError:
             pass  # expected
+
+    def test_translate_code_with_history(self):
+        strategy = CSharpCompilationUnitMigrationWithLLMProxy(unifree.FileMigrationSpec('', '', ''), to_default_dict({
+            "prompts": {
+                "full": "${CODE}",
+                "rules": [
+                    "RULE1",
+                    "RULE2",
+                ]
+            }
+        }))
+
+        result_str = strategy.translate_code("SOME CODE", "full", "SYSTEM PROMPT", lambda x: x)
+        result = json.loads(result_str)
+        self.assertEqual("SOME CODE", result["user"])
+        self.assertEqual("SYSTEM PROMPT", result["system"])
+        self.assertEqual(4, len(result["history"]))
+        self.assertEqual("user", result["history"][0]["role"])
+        self.assertEqual("RULE1", result["history"][0]["content"])
+        self.assertEqual("assistant", result["history"][1]["role"])
 
 
 class CSharpCompilationUnitMigrationStrategyProxy(CSharpCompilationUnitMigrationStrategy):

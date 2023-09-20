@@ -23,6 +23,14 @@ prompts:
     Migrate these methods from a Unity C# class to GDScript class. Methods to migrate:
     ${CODE}
 
+  rules:
+    - Remember these translation rules
+    - \'Start()\' is equivalent to '_ready()'
+    - \'Update()\' is equivalent to '_process(delta)'
+    - \'FixedUpdate()\' is equivalent to '_physics_process(delta)'
+    - \'OnEnable()\' is equivalent to '_enter_tree()'
+    - \'OnDisable()\' is equivalent to '_exit_tree()'
+
 llm:
   class: ChatGptLLM
   config:

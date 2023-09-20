@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # Copyright (c) AppLovin. and its affiliates. All rights reserved.
+import json
 from typing import Dict, Optional, List
 
 import openai
@@ -60,7 +61,9 @@ class ChatGptLLM(LLM):
 
             response = completion.choices[0].message.content
 
-            log.debug(f"\n==== GPT REQUEST ====\n{user}\n\n==== GPT RESPONSE ====\n{response}\n")
+            if log.is_debug():
+                message_str = "\n".join([m["role"] + ": " + m["content"] for m in messages])
+                log.debug(f"\n==== GPT REQUEST ====\n{message_str}\n\n==== GPT RESPONSE ====\n{response}\n")
 
             return response
         except Exception as e:
