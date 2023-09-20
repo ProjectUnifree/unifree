@@ -90,7 +90,7 @@ done
 # Continue script with selected parameters
 expr='^[YyNn]$'
 while [[ ! $RUN_SCRIPT =~ $expr ]]; do
-    print_user_input_query "Do you want to continue with these paramters? [y/n]"
+    print_user_input_query "Do you want to continue with these parameters? [y/n]"
     read RUN_SCRIPT
 done
 
