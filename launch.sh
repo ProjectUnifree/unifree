@@ -197,7 +197,7 @@ print_delimiter
 
 # Get the absolute path of the directory where this script is located
 SRC_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-SCRIPT_DIR="${CLONE_DIR}/scripts"
+
 
 if is_already_cloned_repo "$SRC_DIR"; then
     export DEFAULT_CLONE_DIR="${SRC_DIR}"
@@ -208,6 +208,7 @@ fi
 setup_defaults "${SRC_DIR}" "${DEFAULT_CLONE_DIR}"
 export INSTALL_DIR="$(remove_trailing_slash_if_needed ${INSTALL_DIR})"
 export CLONE_DIR="$(remove_trailing_slash_if_needed ${CLONE_DIR})"
+SCRIPT_DIR="${CLONE_DIR}/scripts"
 
 install_and_activate_venv_if_needed
 
