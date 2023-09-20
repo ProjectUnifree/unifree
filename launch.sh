@@ -200,9 +200,6 @@ fail_if_root
 
 print_delimiter
 
-# Get the absolute path of the directory where this script is located
-SRC_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-
 # Check if any arguments were supplied and launch wizard if not
 WIZARD_FILE_DIR="${SCRIPT_DIR}/wizard.sh"
 if [[ $# -eq 0 ]]; then
