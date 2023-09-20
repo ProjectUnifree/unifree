@@ -7,6 +7,7 @@ import unittest
 from typing import Dict, TypeVar, Optional, List, Any
 
 import unifree
+from tests.test_utils import load_resource_migration_spec, load_resource_file
 from unifree import LLM, QueryHistoryItem
 from unifree.csharp_migration_strategies import CSharpCompilationUnitMigrationStrategy, CSharpCompilationUnitMigrationWithLLM, CSharpCompilationUnitToSingleFileWithLLM
 from unifree.llms import TrivialLLM
