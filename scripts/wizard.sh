@@ -100,6 +100,6 @@ done
 expr='^[Nn]$'
 if [[ $RUN_SCRIPT =~ $expr ]]; then
     print_green "You can run the following command with the supplied parameters later:"
-    echo -e "OPENAI_API_KEY=${OPENAI_API_KEY} ./launch.sh ${CONFIG_NAME} ${ORIGIN_DIR} ${DEST_DIR}"
+    echo -e "OPENAI_API_KEY=\"${OPENAI_API_KEY}\" ./launch.sh \"${CONFIG_NAME}\" \"${ORIGIN_DIR}\" \"${DEST_DIR}\""
     exit 0
 fi
