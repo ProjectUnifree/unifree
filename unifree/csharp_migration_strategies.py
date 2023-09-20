@@ -151,7 +151,7 @@ class CSharpCompilationUnitMigrationWithLLM(CSharpCompilationUnitMigrationStrate
         if "llm" not in config:
             raise RuntimeError(f"No 'llm' key found in the tool configuration")
 
-        self._llm = load_llm(config["llm"])
+        self._llm = self.load_llm()
         self._llm.initialize()
 
     @property
@@ -178,6 +178,16 @@ class CSharpCompilationUnitMigrationWithLLM(CSharpCompilationUnitMigrationStrate
             text = text.replace('${' + key + '}', value)
 
         return text
+
+    def load_llm(self) -> LLM:
+        """
+        Load target LLM.
+
+        Please note: this method is separate for unit tests to be able to override it
+
+        :return: Newly loaded LLM
+        """
+        return load_llm(self.config["llm"])
 
 
 class CSharpCompilationUnitToSingleFileWithLLM(CSharpCompilationUnitMigrationWithLLM):
