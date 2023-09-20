@@ -19,6 +19,11 @@ print_user_input_query() {
     echo -e "${msg}"
 }
 
+print_error() {
+    local msg="$1"
+    echo -e "\033[1;31m${msg}\033[0m"
+}
+
 #########################################################
 # end of helper functions                               #
 #########################################################
@@ -46,16 +51,17 @@ fi
 while [[ $ORIGIN_DIR = "" ]]; do
     print_user_input_query "Full path of the source Unity project"
     read ORIGIN_DIR
-    # TODO: check if directory exists?
+    if [[ ! -d "${ORIGIN_DIR}" ]]; then
+        print_error "Canno't locate directory ${ORIGIN_DIR}"
+        ORIGIN_DIR=""
+    fi
 done
 
 # Ask for the Destenation path
 while [[ $DEST_DIR = "" ]]; do
     print_user_input_query "Full path of the target destination path"
     read DEST_DIR
-    # TODO: check if directory exists?
 done
-
 
 # Ask for the target engine
 while [[ $CONFIG_NAME = "" ]]; do
@@ -70,7 +76,7 @@ while [[ $CONFIG_NAME = "" ]]; do
     if [[ $CONFIG_NAME =~ $expr && -n "${AVAILABLE_CONFIGS[$CONFIG_NAME]}" ]]; then
         CONFIG_NAME="${AVAILABLE_CONFIGS[$CONFIG_NAME]}"
     else
-        echo -e "\033[1;31mUnknwon input ${CONFIG_NAME}.\033[0m"
+        print_error "Unknwon input ${CONFIG_NAME}."
         CONFIG_NAME=""
     fi
 done

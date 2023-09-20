@@ -208,12 +208,9 @@ WIZARD_FILE_DIR="${SCRIPT_DIR}/wizard.sh"
 if [[ $# -eq 0 ]]; then
     if [[ ! -f $WIZARD_FILE_DIR ]]; then
         print_red "Canno't locate ${WIZARD_FILE_DIR}\nPlease make sure all script files are present."
+        exit 1
     fi
     . "$WIZARD_FILE_DIR"
-    exit 0
-else
-    echo "Has args"
-    exit 0
 fi
 
 if is_already_cloned_repo "$SRC_DIR"; then
