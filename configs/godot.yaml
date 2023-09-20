@@ -23,8 +23,11 @@ prompts:
     Migrate these methods from a Unity C# class to GDScript class. Methods to migrate:
     ${CODE}
 
-chatgpt:
-  model: "gpt-3.5-turbo"
+llm:
+  class: ChatGptLLM
+  config:
+    model: "gpt-3.5-turbo"
+    max_tokens: 4000
 
 source:
   ignore_locations: # These locations will not be included in migration
@@ -47,5 +50,5 @@ target:
   extension: .gd
 
 strategies:
-  .cs: CSharpCompilationUnitToSingleFileWithChatGpt
+  .cs: CSharpCompilationUnitToSingleFileWithLLM
 

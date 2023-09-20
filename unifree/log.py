@@ -38,3 +38,7 @@ def error(message: str, exc_info=False) -> None:
         traceback.print_exc(file=sys.stderr)
 
     py_logger.error(message, exc_info=exc_info)
+
+
+def is_debug():
+    return unifree.log_level == 'debug'
