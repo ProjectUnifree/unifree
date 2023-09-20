@@ -1,6 +1,13 @@
 # Migrate Unity projects to other engines!
 
-:warning: This is an early prototype. :warning:
+:warning: This is an early prototype. :warning:  
+
+### ChatGPT
+:warning: Using ChatGPT may lead to leaking sensitive info :warning:
+
+If you are interested how ChatGPT can lead to leaking sensitive info:   
+[Exploring the risks and alternatives of ChatGPT](https://www.ibm.com/blog/exploring-the-risks-and-alternatives-of-chatgpt-paving-a-path-to-trustworthy-ai/)
+
 
 ### Features
 
