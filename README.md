@@ -87,20 +87,20 @@ OPENAI_API_KEY=<your_openai_api_key> ./launch.sh <config_name> <source_project_d
 
 :wave: Join our [Discord server](https://discord.gg/Ee5wJ4JWBQ) for a live discussion!
 
-We are actively seeking contributors. If you are familiar with Unity, Godot, Cocos2d or any other engines, help us!
+We are actively seeking contributors. If you are familiar with Unity, Godot, Cocos Creator or any other engines, help us!
 
 Here is what we need help with:
 
 #### Asset Migration
 
 * :exclamation: :exclamation: Migrate Unity assets to Godot
-* :exclamation: :exclamation: Migrate Unity assets to Cocos2d
+* :exclamation: :exclamation: Migrate Unity assets to Cocos Creator
 * What other engines should be implemented?
 
 #### Source Migration
 
 * Experiment with ChatGPT prompts for better code translation
-* Add prompts/configs to migrate to Cocos2d
+* Add prompts/configs to migrate to Cocos Creator
 * What other engines should be implemented?
 
 #### Framework
