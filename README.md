@@ -1,8 +1,22 @@
 # Migrate Unity projects to other engines!
 
-:warning: This is an early prototype. :warning:
+### :warning: This is an early prototype! :warning:
+This project is being actively developed and it is not stable yet!
+It is currently recommended you either wait, or migrate manually.
 
-### Features
+You can use this tool to help aid migration by providing you with a base, but you _will_ have to modify a lot of code yourself. Please do not under any circumstance expect help regarding this tool from any Godot or Unreal Engine Discord server [_(join our server instead!)_](https://discord.gg/Ee5wJ4JWBQ) And please don't correlate any bad experience you have while using this tool to _"Godot/Unreal sucking and being broken"_, both engines are very stable and game-ready; This is not an official project for either of those engines, this is a community effort.
+
+#### Godot Engine
+If you wish to migrate manually to Godot: [YouTube migration guides](https://www.youtube.com/results?search_query=Migrate+from+Unity+to+Godot), [Godot docs](https://docs.godotengine.org/en/stable/) _(very helpful!)_, [Discord server](https://discord.gg/4JBkykG) _(for any burning questions you can't find answers to online)_
+
+#### Unreal Engine
+If you wish to migrate manually to Unreal Engine: [helpful UE tutorials](https://www.youtube.com/results?search_query=Unreal+Engine+basics+%22(for+Unity+developers)%22), [Unreal Engine docs](https://docs.unrealengine.com/5.3/en-US/unreal-engine-for-unity-developers/) _(very helpful!)_, [Semi-official Discord server](https://discord.com/invite/unreal-slackers) _(for any burning questions you can't find answers to online)_
+
+#### Other engines (Cocos, Stride, etc)
+Search up a tutorial on YouTube, view the docs, and join your engine's Discord server or subreddit for any questions!
+These engines are not currently supported by this tool, as we have a lot more to work on. But support may be added sometime in the future. We are currently focusing on Godot, as well as Unreal.
+
+## Features
 
 * Scan source project and detect files eligible for migration
 * Use ChatGPT to translate `.cs` files into Godot scripts and Unreal 3D classes. Here is how sample translation looks:
@@ -83,7 +97,7 @@ curl -0 https://raw.githubusercontent.com/ProjectUnifree/unifree/main/launch.sh 
 OPENAI_API_KEY=<your_openai_api_key> ./launch.sh <config_name> <source_project_dir> <destination_project_dir>
 ```
 
-### Call To Action
+## Call To Action
 
 :wave: Join our [Discord server](https://discord.gg/Ee5wJ4JWBQ) for a live discussion!
 
