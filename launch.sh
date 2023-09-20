@@ -5,11 +5,6 @@
 
 export PROJECT_NAME="${PROJECT_NAME:-unifree}"
 
-
-# Get the absolute path of the directory where this script is located
-SRC_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-SCRIPT_DIR="${SRC_DIR}/scripts"
-
 #########################################################
 # Override variables as needed.                         #
 # This is the only section that should be modified.     #
@@ -199,6 +194,10 @@ fi
 fail_if_root
 
 print_delimiter
+
+# Get the absolute path of the directory where this script is located
+SRC_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+SCRIPT_DIR="${CLONE_DIR}/scripts"
 
 if is_already_cloned_repo "$SRC_DIR"; then
     export DEFAULT_CLONE_DIR="${SRC_DIR}"
