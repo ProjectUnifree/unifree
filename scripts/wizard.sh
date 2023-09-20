@@ -57,7 +57,7 @@ while [[ $ORIGIN_DIR = "" ]]; do
     fi
 done
 
-# Ask for the Destenation path
+# Ask for the Destination path
 while [[ $DEST_DIR = "" ]]; do
     print_user_input_query "Full path of the target destination path"
     read DEST_DIR
