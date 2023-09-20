@@ -25,15 +25,15 @@ def run_migration(
         config["verbose"] = verbose
     except Exception as e:
         log.error(f"Unable to start: {config} is invalid: {e}", exc_info=e)
-        return -1
+        return 78 # os.EX_CONFIG
 
     if not os.path.exists(source):
         log.error(f"Unable to start: source folder does not exist ('{source}')")
-        return -1
+        return 78 # os.EX_CONFIG
 
     if not os.path.isdir(source):
         log.error(f"Unable to start: source folder is not a folder ('{source}')")
-        return -1
+        return 78 # os.EX_CONFIG
 
     if os.path.exists(destination):
         log.info(f"Using existing destination folder '{destination}'")
@@ -44,7 +44,7 @@ def run_migration(
             os.makedirs(destination)
         except Exception as e:
             log.error(f"Unable to create destination folder '{destination}': {e}", exc_info=e)
-            return -1
+            return 74 # os.EX_IOERR
 
     from unifree.project_migration_strategies import CreateMigrations, ExecuteMigrations
 
@@ -57,10 +57,10 @@ def run_migration(
 
         log.info("Migration completed successfully")
 
-        return 0
+        return os.EX_OK
     except Exception as e:
         log.error(f"Unable to migrate: {e}", exc_info=e)
-        return -1
+        return 70 # os.EX_SOFTWARE
 
 
 def migrate():
@@ -106,7 +106,7 @@ def migrate():
         args, _ = args_parser.parse_known_args()
     except SystemExit:
         args_parser.print_usage()
-        sys.exit(-1)
+        sys.exit(78) # os.EX_CONFIG
 
     args = vars(args)
 
