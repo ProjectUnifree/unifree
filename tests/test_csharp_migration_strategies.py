@@ -6,6 +6,7 @@ import unittest
 from typing import List, Dict, TypeVar, Callable
 
 import unifree
+from tests.test_utils import load_resource_migration_spec, load_resource_file
 from unifree.csharp_migration_strategies import CSharpCompilationUnitMigrationStrategy, CSharpCompilationUnitToSingleFileWithChatGpt
 from unifree.utils import to_default_dict
 
@@ -20,8 +21,8 @@ class TestCSharpCompilationUnitMigrationStrategy(unittest.TestCase):
 
     def test_source_text(self):
         for source_file_name in ['MalformedShortClass.cs', 'ShortClassWithNamespace.cs']:
-            strategy = CSharpCompilationUnitMigrationStrategyProxy(_load_file_migration_spec(source_file_name), self.config)
-            source_text = _load_source_file(source_file_name)
+            strategy = CSharpCompilationUnitMigrationStrategyProxy(load_resource_migration_spec(source_file_name), self.config)
+            source_text = load_resource_file(source_file_name)
 
             self.assertEqual(_normalize_definition(source_text), _normalize_definition(strategy.source_text), f"Source: {source_file_name}")
 
@@ -48,7 +49,7 @@ class TestCSharpCompilationUnitMigrationStrategy(unittest.TestCase):
             """]
         norm_reference_methods = [_normalize_definition(r) for r in reference_methods]
 
-        strategy = CSharpCompilationUnitMigrationStrategyProxy(_load_file_migration_spec('ShortClassNoNamespace.cs'), self.config)
+        strategy = CSharpCompilationUnitMigrationStrategyProxy(load_resource_migration_spec('ShortClassNoNamespace.cs'), self.config)
         method_definitions = strategy.method_declarations
 
         for method_definition in method_definitions:
@@ -66,7 +67,7 @@ class TestCSharpCompilationUnitMigrationStrategy(unittest.TestCase):
         ]
         norm_reference_methods = [_normalize_definition(r) for r in reference_methods]
 
-        strategy = CSharpCompilationUnitMigrationStrategyProxy(_load_file_migration_spec('MalformedShortClass.cs'), self.config)
+        strategy = CSharpCompilationUnitMigrationStrategyProxy(load_resource_migration_spec('MalformedShortClass.cs'), self.config)
         method_definitions = strategy.method_declarations
 
         for method_definition in method_definitions:
@@ -159,7 +160,7 @@ class TestCSharpCompilationUnitMigrationStrategy(unittest.TestCase):
         norm_class_definitions = {n: _normalize_definition(d) for n, d in class_definitions.items()}
 
         for source_file, norm_class_definition in norm_class_definitions.items():
-            strategy = CSharpCompilationUnitMigrationStrategyProxy(_load_file_migration_spec(source_file), self.config)
+            strategy = CSharpCompilationUnitMigrationStrategyProxy(load_resource_migration_spec(source_file), self.config)
             class_definition = strategy.everything_except_method_declarations
 
             self.assertEqual(norm_class_definition, _normalize_definition(class_definition), f"Source: {source_file}")
@@ -194,7 +195,7 @@ class TestCSharpCompilationUnitToSingleFileWithChatGpt(unittest.TestCase):
     config: Dict
 
     def test_execute_small_file(self):
-        strategy = CSharpCompilationUnitToSingleFileWithChatGptProxy(_load_file_migration_spec('ShortClassNoNamespace.cs'), self.config)
+        strategy = CSharpCompilationUnitToSingleFileWithChatGptProxy(load_resource_migration_spec('ShortClassNoNamespace.cs'), self.config)
         strategy.execute()
 
         self.assertEqual("TRANSLATED full 1", strategy.saved_content)
@@ -206,7 +207,7 @@ class TestCSharpCompilationUnitToSingleFileWithChatGpt(unittest.TestCase):
         for ix in range(2, 45):
             expected_class += f"\nTRANSLATED methods_only {ix}\n"
 
-        strategy = CSharpCompilationUnitToSingleFileWithChatGptProxy(_load_file_migration_spec('LongClassWithNamespace.cs'), self.config)
+        strategy = CSharpCompilationUnitToSingleFileWithChatGptProxy(load_resource_migration_spec('LongClassWithNamespace.cs'), self.config)
         strategy.execute()
 
         self.assertEqual(_normalize_definition(expected_class), _normalize_definition(strategy.saved_content))
@@ -215,27 +216,6 @@ class TestCSharpCompilationUnitToSingleFileWithChatGpt(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         _setup_test_config(cls)
-
-
-def _load_file_migration_spec(source_file_name: str) -> unifree.FileMigrationSpec:
-    dir_path = os.path.dirname(os.path.abspath(__file__))
-    file_path = os.path.join(dir_path, 'resources', source_file_name)
-
-    if not os.path.exists(file_path):
-        raise RuntimeError(f"'{source_file_name}' not found")
-
-    return unifree.FileMigrationSpec(
-        source_file_path=file_path,
-        source_project_path=dir_path,
-        destination_project_path="na"
-    )
-
-
-def _load_source_file(source_file_name: str) -> str:
-    file_path = _load_file_migration_spec(source_file_name)
-
-    with open(file_path.source_file_path, 'r') as source_file:
-        return source_file.read()
 
 
 def _normalize_definition(s: str) -> str:
