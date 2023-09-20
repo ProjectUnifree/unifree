@@ -200,15 +200,6 @@ fail_if_root
 
 print_delimiter
 
-# Check if any arguments were supplied and launch wizard if not
-WIZARD_FILE_DIR="${SCRIPT_DIR}/wizard.sh"
-if [[ $# -eq 0 ]]; then
-    if [[ ! -f $WIZARD_FILE_DIR ]]; then
-        print_red "Cannot locate ${WIZARD_FILE_DIR}.\nPlease make sure all script files are present."
-    fi
-    . "$WIZARD_FILE_DIR"
-fi
-
 if is_already_cloned_repo "$SRC_DIR"; then
     export DEFAULT_CLONE_DIR="${SRC_DIR}"
 else
@@ -224,7 +215,14 @@ install_and_activate_venv_if_needed
 print_delimiter
 
 # Exit if arguments aren't defined.
-if [[ -z "${ORIGIN_DIR}" ]]; then
+# Check if any arguments were supplied and launch wizard if not
+WIZARD_FILE_DIR="${SCRIPT_DIR}/wizard.sh"
+if [[ $# -eq 0 ]]; then
+    if [[ ! -f $WIZARD_FILE_DIR ]]; then
+        print_red "Cannot locate ${WIZARD_FILE_DIR}.\nPlease make sure all script files are present."
+    fi
+    . "$WIZARD_FILE_DIR"
+elif [[ -z "${ORIGIN_DIR}" ]]; then
     print_green "Installing only, run with ./launch.sh <config_name> <source_directory> <destination_directory>."
     exit 0
 fi
