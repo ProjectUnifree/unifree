@@ -3,3 +3,4 @@
 
 from .chatgpt_llm import ChatGptLLM
 from .trivial_llm import TrivialLLM
+from .multiprocess_local_llm import MultiprocessLocalLLM

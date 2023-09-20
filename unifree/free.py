@@ -4,6 +4,7 @@ import argparse
 import os.path
 import platform
 import sys
+from typing import Optional
 
 import unifree
 from unifree import utils, log
@@ -11,9 +12,9 @@ from unifree import utils, log
 
 def run_migration(
         config: str,
-        open_ai_key: str,
         source: str,
         destination: str,
+        llm_secret_key: Optional[str] = None,
         verbose: bool = False,
 ):
     if verbose:
@@ -21,8 +22,11 @@ def run_migration(
 
     try:
         config = utils.load_config(config)
-        config["openai_key"] = open_ai_key
         config["verbose"] = verbose
+
+        if llm_secret_key and "llm" in config and "config" in config["llm"]:
+            config["llm"]["config"]["secret_key"] = llm_secret_key
+
     except Exception as e:
         log.error(f"Unable to start: {config} is invalid: {e}", exc_info=e)
         return -1
@@ -78,12 +82,6 @@ def migrate():
         help=f"Name of the migration configuration. Must match file name in the ./configs folder",
     )
     args_parser.add_argument(
-        '--open_ai_key', '-k',
-        required=True,
-        type=str,
-        help=f"OpenAI API secret key. Obtain your key from 'https://platform.openai.com/account/api-keys'",
-    )
-    args_parser.add_argument(
         '--source', '-s',
         required=True,
         type=str,
@@ -94,6 +92,12 @@ def migrate():
         required=True,
         type=str,
         help=f"Path to the destination project folder. Migrated files would be stored there",
+    )
+    args_parser.add_argument(
+        '--llm_secret_key', '-k',
+        required=False,
+        type=str,
+        help=f"Secret key for the current LLM (optional)",
     )
     args_parser.add_argument(
         '--verbose', '-v',

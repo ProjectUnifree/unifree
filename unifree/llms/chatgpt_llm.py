@@ -12,17 +12,18 @@ class ChatGptLLM(LLM):
     """
     This class adds a capability to query chat GPT for a completion
     """
-    _llm_config: Dict
     _config: Dict
 
     def __init__(self, config: Dict) -> None:
         super().__init__()
 
-        self._config = config
-        self._llm_config = config["llm"]["config"]
+        self._config = config["config"]
+
+    def initialize(self) -> None:
+        pass
 
     def query(self, user: str, system: Optional[str] = None, history: Optional[List[QueryHistoryItem]] = None) -> str:
-        openai.api_key = self._config['openai_key']
+        openai.api_key = self._config['secret_key']
 
         if log.is_debug():
             short_user_query = user[:50].replace("\n", " ")
@@ -51,7 +52,7 @@ class ChatGptLLM(LLM):
             })
 
             completion = openai.ChatCompletion.create(
-                model=self._llm_config["model"],
+                model=self._config["model"],
                 messages=messages
             )
 
@@ -67,10 +68,10 @@ class ChatGptLLM(LLM):
             raise RuntimeError(f"ChatGPT query failed: {e}")
 
     def fits_in_one_prompt(self, token_count: int) -> bool:
-        return token_count < self._llm_config["max_tokens"]
+        return token_count < self._config["max_tokens"]
 
     def count_tokens(self, source_text: str) -> int:
-        encoding = tiktoken.encoding_for_model(self._llm_config["model"])
+        encoding = tiktoken.encoding_for_model(self._config["model"])
         num_tokens = len(encoding.encode(source_text))
 
         return num_tokens

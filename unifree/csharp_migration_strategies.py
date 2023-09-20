@@ -9,7 +9,7 @@ import tree_sitter
 from unifree import log, MigrationStrategy, FileMigrationSpec, utils, LLM
 from unifree.llms.code_extrators import extract_first_source_code, extract_header_implementation
 from unifree.source_code_parsers import CSharpCodeParser
-from unifree.utils import load_class
+from unifree.utils import load_class, load_llm
 
 
 class CSharpCompilationUnitMigrationStrategy(MigrationStrategy, ABC):
@@ -148,7 +148,11 @@ class CSharpCompilationUnitMigrationWithLLM(CSharpCompilationUnitMigrationStrate
     def __init__(self, file_migration_spec: FileMigrationSpec, config: Dict) -> None:
         super().__init__(file_migration_spec, config)
 
-        self._llm = self.load_llm()
+        if "llm" not in config:
+            raise RuntimeError(f"No 'llm' key found in the tool configuration")
+
+        self._llm = load_llm(config["llm"])
+        self._llm.initialize()
 
     @property
     def llm(self) -> LLM:
@@ -174,10 +178,6 @@ class CSharpCompilationUnitMigrationWithLLM(CSharpCompilationUnitMigrationStrate
             text = text.replace('${' + key + '}', value)
 
         return text
-
-    def load_llm(self) -> LLM:
-        llm_class = load_class(self.config["llm"]["class"], "llms")
-        return llm_class(self.config)
 
 
 class CSharpCompilationUnitToSingleFileWithLLM(CSharpCompilationUnitMigrationWithLLM):

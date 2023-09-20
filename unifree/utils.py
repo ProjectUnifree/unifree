@@ -8,6 +8,8 @@ from typing import Type, Dict, Any
 
 import yaml
 
+from unifree import LLM
+
 
 def load_config(config_name: str) -> Dict[str, Any]:
     from unifree import log
@@ -45,6 +47,11 @@ def load_class(class_name: str, module: str) -> Type:
         raise RuntimeError(f"Class {class_name} not found")
 
     return loaded_class
+
+
+def load_llm(config: Dict) -> LLM:
+    llm_class = load_class(config["class"], "llms")
+    return llm_class(config)
 
 
 def camel_to_snake(camel_case_str: str) -> str:
