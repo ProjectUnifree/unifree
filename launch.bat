@@ -173,6 +173,7 @@ if "%DEST_DIR%"=="" (
 :run_main
 
 @echo on
+set PYTHONPATH=%PYTHONPATH%;.
 "%PYTHON_CMD%" "%CLONE_DIR%\unifree\free.py" -c "%CONFIG_NAME%" -k "%OPENAI_API_KEY%" -s "%ORIGIN_DIR%" -d "%DEST_DIR%"
 
 exit /b
