@@ -13,7 +13,7 @@ from unifree import log
 
 class CSharpCodeParser:
     _parser: tree_sitter.Parser
-    _config: Dict
+    _config: Dict[str, any]
 
     def __init__(self, config: Dict) -> None:
         self._config = config
@@ -86,13 +86,13 @@ class CSharpCodeParser:
 
         return cls._find_vendor_folder(os.path.dirname(current_folder_path), remaining_depth - 1)
 
-    def _replace_macros_with_comments(self, source_str):
-        result = ''
-        for line in source_str.split("\n"):
-            stripped_line = line.rstrip().lstrip()
-            if stripped_line.startswith("#"):
-                result += "// " + line + "\n"
+    def _replace_macros_with_comments(self, source_str : str) -> str:
+        result = []
+        lines = [line.strip() for line in source_str.split("\n") if line.strip() != '']
+        for line in lines:
+            if line.startswith("#"):
+                result.append("// " + line)
             else:
-                result += line + "\n"
+                result.append(line)
 
-        return result
+        return "\n".join(result)
