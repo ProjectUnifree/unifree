@@ -1,5 +1,5 @@
 # Syntax analyzer. We need to parse C# code
-# and split it into digestable size for ChatGPT
+# and split it into digestible size for ChatGPT
 tree_sitter==0.20.2
 
 # Open AI library to talk to ChatGPT. We need it to translate
@@ -20,4 +20,6 @@ tqdm
 # warning from openai
 urllib3==1.26.6
 
-
+# sentence-transformers and chromadb are used for KnownTranslationsDb implemenation
+sentence-transformers>=2.2
+chromadb>=0.4

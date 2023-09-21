@@ -73,7 +73,11 @@ class ChatGptLLM(LLM):
 
             response = completion.choices[0].message.content
 
-            log.debug(f"\n==== GPT REQUEST ====\n{user}\n\n==== GPT RESPONSE ====\n{response}\n")
+            if log.is_debug():
+                messages_str = [f"> {m['role']}: {m['content']}" for m in messages]
+                messages_str = "\n\n".join(messages_str)
+
+                log.debug(f"\n==== GPT REQUEST ====\n{messages_str}\n\n==== GPT RESPONSE ====\n{response}\n")
 
             return response
         except Exception as e:
