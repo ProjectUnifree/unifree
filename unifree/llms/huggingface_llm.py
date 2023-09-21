@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 from typing import Optional, List, Dict
 
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
+from ctransformers import AutoModelForCausalLM, AutoTokenizer
 
 from unifree import LLM, QueryHistoryItem, log
 
@@ -22,50 +21,25 @@ class HuggingfaceLLM(LLM):
         self._tokenizer = None
 
     def query(self, user: str, system: Optional[str] = None, history: Optional[List[QueryHistoryItem]] = None) -> str:
-        with torch.no_grad():
-            pipe = pipeline(
-                "text-generation",
-                model=self._model,
-                tokenizer=self._tokenizer,
-                max_new_tokens=self.config["config"]["max_new_tokens"],
-                do_sample=True,
-                temperature=self.config["config"]["temperature"],
-                top_p=self.config["config"]["top_p"],
-                top_k=self.config["config"]["top_k"],
-                repetition_penalty=self.config["config"]["repeat_penalty"],
-            )
+        # TODO FORMULATE PROPER PROMPT WITH ALL OF THE INPUTS ABOVE
+        prompt = user
+        response = self._model(prompt)
 
-            # TODO FORMULATE PROPER PROMPT WITH ALL OF THE INPUTS ABOVE
-            prompt = user
-            result = pipe(prompt)
+        log.debug(f"\n==== GPT REQUEST ====\n{user}\n\n==== GPT RESPONSE ====\n{response}\n")
 
-            if len(result) > 0:
-                response = result[0]["generated_text"]
-
-                log.debug(f"\n==== GPT REQUEST ====\n{user}\n\n==== GPT RESPONSE ====\n{response}\n")
-
-                return response
-            else:
-                raise RuntimeError("Model returned no results")
+        return response
 
     def initialize(self) -> None:
         checkpoint = self.config["config"]["checkpoint"]
 
-        self._tokenizer = AutoTokenizer.from_pretrained(checkpoint, use_fast=True)
-
         self._model = AutoModelForCausalLM.from_pretrained(
-            pretrained_model_name_or_path=checkpoint,
-            device_map="auto",
-            trust_remote_code=False,
-            revision="main"
+            checkpoint,
+            model_type=self.config["config"]["model_type"],
+            gpu_layers=self.config["config"]["gpu_layers"],
         )
-        self._model.eval()
 
     def fits_in_one_prompt(self, token_count: int) -> bool:
         return token_count < self.config["config"]["max_tokens"]
 
     def count_tokens(self, source_text: str) -> int:
-        assert self._tokenizer is not None
-        tokenized = self._tokenizer(source_text)
-
-        return len(tokenized)
+        raise NotImplementedError("TODO IMPLEMENT")

@@ -21,10 +21,3 @@ tqdm
 urllib3==1.26.6
 
 
-# Pytorch is required huggingface transformers (models)
-torch
-
-# 'accelerate' is required to run Huggingface models in non-GPU environments
-accelerate
-transformers
-

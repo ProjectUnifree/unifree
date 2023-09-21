@@ -14,9 +14,10 @@ class TestHuggingfaceLLM(unittest.TestCase):
         config = to_default_dict({
             "class": "HuggingfaceLLM",
             "config": {
-                "checkpoint": "codellama/CodeLlama-7b-hf",
+                "checkpoint": "TheBloke/CodeLlama-34B-Instruct-GGUF",
                 "max_tokens": 1024,
-                "max_new_tokens": 1024,
+                "model_type": "llama",
+                "gpu_layers": 50,
             },
         })
 
