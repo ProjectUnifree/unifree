@@ -49,11 +49,11 @@ goto Start
 :Try_Install_Dependencies
     :: Check for git installation
     where git >nul 2>&1
-    if %errorlevel% neq 0 (
+    if !errorlevel! neq 0 (
         echo Git is not found.
 
         where winget >nul 2>&1
-        if %errorlevel% neq 0 (
+        if !errorlevel! neq 0 (
             echo Please install Git and try again.
             set %~1=1
             goto:eof
@@ -63,13 +63,34 @@ goto Start
         )
     )
 
+    :: Check for C++ build tools. 'cl' is the C++ compiler.
+    where cl >nul 2>&1
+    if !errorlevel! neq 0 (
+        echo "Microsoft C++ build tools not found."
+
+        where winget >nul 2>&1
+        if !errorlevel! neq 0 (
+            echo "Microsoft C++ Build Tools not found."
+            echo "Please install them and try again."
+        ) else (
+            echo "Installing Microsoft C++ Build Tools ..."
+            winget install Microsoft.VisualStudio.2022.BuildTools --override "--wait --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"
+        )
+
+        echo "Once installed, please run this script from the 'Developer Command Prompt for Visual Studio'."
+        echo "That command prompt has the needed environment variables for compiling C++ code."
+
+        set %~1=1
+        goto:eof
+    )
+
     :: Check for python installation
     where "%PYTHON_CMD%" >nul 2>&1
-    if %errorlevel% neq 0 (
+    if !errorlevel! neq 0 (
         echo Python is not found.
 
         where winget >nul 2>&1
-        if %errorlevel% neq 0 (
+        if !errorlevel! neq 0 (
             echo Please install Python and try again.
             set %~1=1
             goto:eof
@@ -81,7 +102,7 @@ goto Start
 
     :: Check that pip is installed
     "%PYTHON_CMD%" -m ensurepip
-    if %errorlevel% neq 0 (
+    if !errorlevel! neq 0 (
         echo Installing pip ...
         "%PYTHON_CMD%" -m ensurepip --upgrade
     )
@@ -100,7 +121,7 @@ goto Start
 :Install_And_Activate_Venv_If_Needed
     if exist "%CLONE_DIR%\.installed" (
         echo Project is already installed.
-        
+
         cd "%CLONE_DIR%"
         call :Activate_Venv
 
@@ -154,6 +175,7 @@ if exist "%SRC_DIR%\.git" (
 )
 
 call :Install_And_Activate_Venv_If_Needed
+if !SHOULD_EXIT! neq 0 exit /b 1
 
 echo ------------------------------------------------------------
 
