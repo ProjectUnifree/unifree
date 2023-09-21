@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+import sys
 # Copyright (c) Unifree
 # This code is licensed under MIT license (see LICENSE.txt for details)
 
@@ -24,8 +24,8 @@ class MultiprocessLocalLLM(LLM):
           class: <wrapped LLM class>
           config <wrapped LLM config>
 
-        wrapper_config
-          num_workers: 5,
+        wrapper_config:
+          num_workers: 5
           query_timeout_sec: 10
     ```
     """
@@ -75,6 +75,7 @@ class MultiprocessLocalLLM(LLM):
         if not cls._shared_executor:
             wrapper_config = config["wrapper_config"]
             llm_config = config["llm_config"]
+            # cls._shared_executor = ProcessPoolExecutor(
             cls._shared_executor = ProcessPoolExecutor(
                 max_workers=wrapper_config["num_workers"],
                 initializer=_multi_process_worker_init,
@@ -131,8 +132,17 @@ def _multi_process_worker_translate(query: _QueryRequest) -> _QueryResult:
             )
         )
     except Exception as e:
-        log.error(f"Failed to query local LLM: {e}", exc_info=e)
+        import traceback
+        traceback.print_exc(file=sys.stderr)
+
+        log.error(f"Failed to query local LLM: {e}")
         return _QueryResult(
             response='',
             exception=e
+        )
+    except:
+        log.error(f"Failed to query local LLM with unknown exception")
+        return _QueryResult(
+            response='',
+            exception=Exception("Unknown exception")
         )
