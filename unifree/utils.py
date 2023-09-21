@@ -16,16 +16,13 @@ from unifree import LLM
 
 def load_config(config_name: str) -> Dict[str, Any]:
     from unifree import log
+    import unifree
 
-    config_file_name = f"configs/{config_name}.yaml"
-    for potential_config_path in [config_file_name, os.path.join("..", config_file_name)]:
-        if os.path.exists(potential_config_path) and os.path.isfile(config_file_name):
-            config_file_name = potential_config_path
-            break
-
+    config_folder_path = os.path.join(unifree.project_root, "configs")
+    config_file_name = os.path.join(config_folder_path, f"{config_name}.yaml")
     if not os.path.exists(config_file_name) or not os.path.isfile(config_file_name):
         supported_destinations = []
-        for config_file_name in os.listdir("configs/"):
+        for config_file_name in os.listdir(config_folder_path):
             if config_file_name.endswith(".yaml"):
                 supported_destinations.append(config_file_name.replace(".yaml", ""))
 

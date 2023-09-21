@@ -132,6 +132,9 @@ class CreateMigrations(ConcurrentMigrationStrategy):
         from unifree.source_code_parsers import CSharpCodeParser
         CSharpCodeParser.initialize()
 
+        from unifree.known_translations_db import KnownTranslationsDb
+        KnownTranslationsDb.initialize_instance(self.config)
+
     def _check_if_source_is_unity_project(self):
         files = os.listdir(self._source_path)
         for required_file in ['Assets', 'ProjectSettings']:

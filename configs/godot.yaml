@@ -49,6 +49,21 @@ target:
   lower_folder_names: true
   extension: .gd
 
+known_translations:
+  target_engine: godot
+  embedding_function: krlvi/sentence-t5-base-nlpl-code_search_net
+  result_count: 5
+  user_request: |
+    Remember this correct translation from Unity: 
+    ```
+    ${SOURCE}
+    ```
+    is translated as:
+    ```
+    ${TARGET}
+    ```
+  assistant_response: Certainly! I will remember this translation.
+
 strategies:
   .cs: CSharpCompilationUnitToSingleFileWithLLM
 

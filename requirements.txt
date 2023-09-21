@@ -20,4 +20,6 @@ tqdm
 # warning from openai
 urllib3==1.26.6
 
-
+# sentence-transformers and chromadb are used for KnownTranslationsDb implemenation
+sentence-transformers>=2.2
+chromadb>=0.4
