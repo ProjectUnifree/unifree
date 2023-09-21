@@ -21,3 +21,5 @@ tqdm
 urllib3==1.26.6
 
 
+sentence-transformers>=2.2
+chromadb>=0.4

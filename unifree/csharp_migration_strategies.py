@@ -5,14 +5,14 @@
 
 import os
 from abc import ABC
-from typing import Dict, Optional, Callable, TypeVar
+from typing import Dict, Optional, Callable, TypeVar, List
 
 import tree_sitter
 
-from unifree import log, MigrationStrategy, FileMigrationSpec, utils, LLM
+from unifree import log, MigrationStrategy, FileMigrationSpec, utils, LLM, QueryHistoryItem
 from unifree.llms.code_extrators import extract_first_source_code, extract_header_implementation
 from unifree.source_code_parsers import CSharpCodeParser
-from unifree.utils import load_class, load_llm
+from unifree.utils import load_llm
 
 
 class CSharpCompilationUnitMigrationStrategy(MigrationStrategy, ABC):
@@ -165,7 +165,8 @@ class CSharpCompilationUnitMigrationWithLLM(CSharpCompilationUnitMigrationStrate
 
     def translate_code(self, code: str, prompt_type: str, system: str, extractor_fn: Callable[[str], ResultType]) -> ResultType:
         user = self.create_code_prompt(prompt_type, code)
-        response = self.llm.query(user, system)
+        history = self.load_translation_history(code)
+        response = self.llm.query(user, system, history)
         return extractor_fn(response)
 
     def create_code_prompt(self, prompt_type: str, code: str) -> str:
@@ -181,6 +182,22 @@ class CSharpCompilationUnitMigrationWithLLM(CSharpCompilationUnitMigrationStrate
             text = text.replace('${' + key + '}', value)
 
         return text
+
+    def load_translation_history(self, code: str) -> List[QueryHistoryItem]:
+        """
+        Load translation history that is relevant to the given bit of translated code.
+
+        :param code:    Code that will be translated
+
+        :return: Documents relevant to the translation history
+        """
+        from unifree.known_translations_db import KnownTranslationsDb
+        if KnownTranslationsDb.is_instance_initialized():
+            return KnownTranslationsDb.instance().fetch_nearest_as_query_history(
+                query=code
+            )
+        else:
+            return []
 
     def load_llm(self) -> LLM:
         """
