@@ -15,13 +15,14 @@ class HuggingfaceLLM(LLM):
     """
     This is a model that represents Huggingface 'AutoModelForCausalLM' transformer model.
 
-      llm_config:
+      llm:
         class: HuggingfaceLLM
         config:
           checkpoint: TheBloke/CodeLlama-34B-Instruct-GGUF
-          max_tokens: 1024
+          context_length: 4096
           model_type: llama
           gpu_layers: 50
+
     """
     _model: Optional[ctransformers.LLM]
 
