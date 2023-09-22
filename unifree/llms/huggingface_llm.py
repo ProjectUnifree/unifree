@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 from typing import Optional, List, Dict
 
-import ctransformers
-from ctransformers import AutoModelForCausalLM
-
 from unifree import LLM, QueryHistoryItem, log
 
 
@@ -24,7 +21,7 @@ class HuggingfaceLLM(LLM):
           gpu_layers: 50
 
     """
-    _model: Optional[ctransformers.LLM]
+    _model: Optional[any]
 
     def __init__(self, config: Dict) -> None:
         super().__init__(config)
@@ -55,6 +52,8 @@ class HuggingfaceLLM(LLM):
         return response
 
     def initialize(self) -> None:
+        from ctransformers import AutoModelForCausalLM
+
         llm_config = self.config["config"]
         checkpoint = llm_config["checkpoint"]
 
