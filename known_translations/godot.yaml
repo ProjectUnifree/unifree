@@ -1,0 +1,72 @@
+translations:
+  - title: Ternary Operators
+    source: |
+      variable = {condition} ? (true_statement) : (false_statement);
+    target: |
+      variable = {translated_true_statement} if {translated_condition} else "{translated_false_statement}
+  # ---------------------------------------------------------------------------------------------------------------------
+  - title: Start() Function
+    source: |
+      private void Start()
+      {
+        {function_body}
+      }
+
+    target: |
+      func _ready() -> void:
+      {
+        {translated_function_body}
+      }
+  # ---------------------------------------------------------------------------------------------------------------------
+  - title: OnEnable() Function
+    source: |
+      private void OnEnable()
+      {
+        {function_body}
+      }
+
+    target: |
+      func _enter_tree() -> void:
+      {
+        {translated_function_body}
+      }
+  # ---------------------------------------------------------------------------------------------------------------------
+  - title: OnDisable() Function
+    source: |
+      private void OnDisable()
+      {
+        {function_body}
+      }
+
+    target: |
+      func _exit_tree() -> void:
+      {
+        {translated_function_body}
+      }
+  # ---------------------------------------------------------------------------------------------------------------------
+  - title: FixedUpdate() Function
+    source: |
+      private void FixedUpdate()
+      {
+        {function_body}
+      }
+
+    target: |
+      func _physics_process(delta: float) -> void:
+      {
+        {translated_function_body}
+      }
+  # ---------------------------------------------------------------------------------------------------------------------
+  - title: Update() Function
+    source: |
+      private void Update()
+      {
+        {function_body}
+      }
+
+    target: |
+      func _process(delta: float) -> void:
+      {
+        {translated_function_body}
+      }
+# ---------------------------------------------------------------------------------------------------------------------

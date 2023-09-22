@@ -8,6 +8,7 @@ from typing import Dict
 
 import tree_sitter
 
+import unifree
 from unifree import log
 
 
@@ -27,11 +28,9 @@ class CSharpCodeParser:
         c_sharp_library_path = cls._c_sharp_library_path()
         if not os.path.exists(c_sharp_library_path):
             c_sharp_library_folder_path = os.path.dirname(c_sharp_library_path)
-            folder_containing_vendor = os.path.dirname(os.path.dirname(os.path.dirname(c_sharp_library_folder_path)))
-
             log.debug(f"C# library not found at '{c_sharp_library_path}', building...")
 
-            tree_sitter_csharp_folder_path = os.path.join(folder_containing_vendor, 'vendor', 'tree-sitter-c-sharp')
+            tree_sitter_csharp_folder_path = os.path.join(unifree.project_root, 'vendor', 'tree-sitter-c-sharp')
             if not os.path.exists(tree_sitter_csharp_folder_path):
                 log.error(f"CSharp implementation of the tree sitter is not found at {tree_sitter_csharp_folder_path}")
                 raise RuntimeError(f"CSharp tree sitter not found in {tree_sitter_csharp_folder_path}")
@@ -66,25 +65,8 @@ class CSharpCodeParser:
 
     @classmethod
     def _c_sharp_library_path(cls) -> str:
-        # Try to find 'vendor' folder
-        current_folder_path = os.path.abspath(os.curdir)
-        folder_containing_vendor = cls._find_vendor_folder(current_folder_path, 4)
-
-        c_sharp_library_folder_path = os.path.join(folder_containing_vendor, 'vendor', 'build', 'libraries')
+        c_sharp_library_folder_path = os.path.join(unifree.project_root, 'vendor', 'build', 'libraries')
         return os.path.join(c_sharp_library_folder_path, 'c-sharp.so')
-
-    @classmethod
-    def _find_vendor_folder(cls, current_folder_path: str, remaining_depth: int) -> str:
-        if remaining_depth <= 0:
-            log.error("Unable to locate 'vendor' folder that is necessary for reading the code. Please make sure your project is setup correctly")
-            raise RuntimeError(f"Can't locate 'vendor' folder")
-
-        if os.path.isdir(current_folder_path):
-            for file_name in os.listdir(current_folder_path):
-                if os.path.isdir(os.path.join(current_folder_path, file_name)) and file_name == 'vendor':
-                    return current_folder_path
-
-        return cls._find_vendor_folder(os.path.dirname(current_folder_path), remaining_depth - 1)
 
     def _replace_macros_with_comments(self, source_str):
         result = ''

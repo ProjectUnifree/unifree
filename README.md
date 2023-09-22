@@ -1,8 +1,13 @@
 # Migrate Unity projects to other engines!
 
 ### :warning: This is an early prototype! :warning:
+
 This project is being actively developed and it is not stable yet!
 It is currently recommended you either wait, or migrate manually.
+
+### :mag: Your feedback is crucial! 
+
+If you encounter any issues during importing, please [_open an issue_](https://github.com/ProjectUnifree/unifree/issues) on this repository — it is vital for the success and improvement of this project.
 
 You can use this tool to help aid migration by providing you with a base, but you _will_ have to modify a lot of code yourself. Please do not under any circumstance expect help regarding this tool from any Godot or Unreal Engine Discord server [_(join our server instead!)_](https://discord.gg/Ee5wJ4JWBQ) And please don't correlate any bad experience you have while using this tool to _"Godot/Unreal sucking and being broken"_, both engines are very stable and game-ready; This is not an official project for either of those engines, this is a community effort.
 
