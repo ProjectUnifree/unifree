@@ -27,18 +27,15 @@ class ChatGptLLM(LLM):
     ```
 
     """
-    _config: Dict
 
     def __init__(self, config: Dict) -> None:
-        super().__init__()
-
-        self._config = config["config"]
+        super().__init__(config)
 
     def initialize(self) -> None:
         pass
 
     def query(self, user: str, system: Optional[str] = None, history: Optional[List[QueryHistoryItem]] = None) -> str:
-        openai.api_key = self._config['secret_key']
+        openai.api_key = self.config["config"]['secret_key']
 
         if log.is_debug():
             short_user_query = user[:50].replace("\n", " ")
@@ -67,7 +64,7 @@ class ChatGptLLM(LLM):
             })
 
             completion = openai.ChatCompletion.create(
-                model=self._config["model"],
+                model=self.config["config"]["model"],
                 messages=messages
             )
 
@@ -87,10 +84,10 @@ class ChatGptLLM(LLM):
             raise RuntimeError(f"ChatGPT query failed: {e}")
 
     def fits_in_one_prompt(self, token_count: int) -> bool:
-        return token_count < self._config["max_tokens"]
+        return token_count < self.config["config"]["max_tokens"]
 
     def count_tokens(self, source_text: str) -> int:
-        encoding = tiktoken.encoding_for_model(self._config["model"])
+        encoding = tiktoken.encoding_for_model(self.config["config"]["model"])
         num_tokens = len(encoding.encode(source_text))
 
         return num_tokens

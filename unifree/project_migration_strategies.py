@@ -63,7 +63,9 @@ class CreateMigrations(ConcurrentMigrationStrategy):
 
         log.info(f"Computing migration strategies for {len(project_files):,} files...")
         results = self.map_concurrently(
-            self._map_file_path_to_migration, project_files,
+            self._map_file_path_to_migration,
+            project_files,
+            max_workers=self.config["concurrency"]["create_strategy_worker"] if self.config["concurrency"]["create_strategy_worker"] else 1,
             unit='path',
             chunksize=1,
         )
@@ -156,6 +158,7 @@ class ExecuteMigrations(ConcurrentMigrationStrategy):
 
         results = self.map_concurrently(
             self._execute_strategy, self._strategies,
+            max_workers=self.config["concurrency"]["execute_strategy_workers"] if self.config["concurrency"]["execute_strategy_workers"] else 1,
             unit='file',
             chunksize=1,
         )

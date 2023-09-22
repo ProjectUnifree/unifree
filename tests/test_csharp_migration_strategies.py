@@ -253,7 +253,7 @@ class CSharpCompilationUnitToSingleFileWithLLMProxy(CSharpCompilationUnitToSingl
             def initialize(self) -> None:
                 pass
 
-        local_llm = LocalLLM()
+        local_llm = LocalLLM(self.config)
         local_llm._parent = self
 
         return local_llm
