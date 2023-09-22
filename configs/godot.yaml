@@ -26,8 +26,8 @@ prompts:
 llm:
   class: ChatGptLLM
   config:
-    model: "gpt-3.5-turbo"
-    max_tokens: 4000
+    model: "gpt-3.5-turbo-16k"
+    max_tokens: 10000
 
 source:
   ignore_locations: # These locations will not be included in migration
@@ -67,3 +67,6 @@ known_translations:
 strategies:
   .cs: CSharpCompilationUnitToSingleFileWithLLM
 
+concurrency:
+  create_strategy_workers: 4
+  execute_strategy_workers: 4

@@ -2,13 +2,14 @@ prompts:
   system: |
     You are professional Unity engineer who is migrating a large project from Unity platform to Godot 4.1. Migrate code to GDScript, which you are an expert in. Follow the following rules:
     1. Output code only, put explanations as comments.
-    2. Do not skip any logic.
-    3. Preserve all comments without changing.
-    4. If migration is impossible leave "TODO [Migrate]" comment.
-    5. Use GDScript best practices.
-    6. Convert camelCase variable names and method names to snake_case.
-    7. Unity namespaces should migrate into 'class_name' directive. 
-    8. Unity class should migrate into 'class_name' directive. 
+    2. Output code must be surrounded with ``` (three ticks)
+    3. Do not skip any logic.
+    4. Preserve all comments without changing.
+    5. If migration is impossible leave "TODO [Migrate]" comment.
+    6. Use GDScript best practices.
+    7. Convert camelCase variable names and method names to snake_case.
+    8. Unity namespaces should migrate into 'class_name' directive. 
+    9. Unity class should migrate into 'class_name' directive. 
   
 
   full: |
@@ -27,7 +28,7 @@ llm:
   class: HuggingfaceLLM
   config:
     checkpoint: TheBloke/CodeLlama-34B-Instruct-GGUF
-    max_tokens: 256
+    context_length: 4096
     model_type: llama
     gpu_layers: 50
 
@@ -54,7 +55,7 @@ target:
 known_translations:
   target_engine: godot
   embedding_function: krlvi/sentence-t5-base-nlpl-code_search_net
-  result_count: 5
+  result_count: 3
   user_request: |
     Remember this correct translation from Unity: 
     ```
@@ -69,3 +70,6 @@ known_translations:
 strategies:
   .cs: CSharpCompilationUnitToSingleFileWithLLM
 
+concurrency:
+  create_strategy_workers: 4
+  execute_strategy_workers: 1

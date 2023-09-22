@@ -47,3 +47,6 @@ target:
 strategies:
   .cs: CSharpCompilationUnitToInterfaceImplementationWithLLM
 
+concurrency:
+  create_strategy_workers: 4
+  execute_strategy_workers: 4

@@ -33,7 +33,8 @@ class HuggingfaceLLM(LLM):
     def query(self, user: str, system: Optional[str] = None, history: Optional[List[QueryHistoryItem]] = None) -> str:
         prompt = ''
         if system:
-            prompt += system + "\n\n"
+            prompt += "> user: Remember these rules: \n" + system + "\n\n"
+            prompt += "> assistant: Certainly, I will remember and follow these rules. \n\n"
 
         if history:
             history_str = [f"> {h.role}: {h.content}" for h in history]
@@ -41,24 +42,30 @@ class HuggingfaceLLM(LLM):
 
             prompt += history_str + "\n\n"
 
-        prompt += user
+        prompt += "> user: " + user + "\n\n"
+        prompt += "> assistant: "
+
+        log.debug(f"\n==== LLM REQUEST ====\n{prompt}\n")
+
         response = self._model(prompt)
 
-        log.debug(f"\n==== LLM REQUEST ====\n{prompt}\n\n==== LLM RESPONSE ====\n{response}\n")
+        log.debug(f"\n==== LLM RESPONSE ====\n{response}\n")
 
         return response
 
     def initialize(self) -> None:
-        checkpoint = self.config["config"]["checkpoint"]
+        llm_config = self.config["config"]
+        checkpoint = llm_config["checkpoint"]
 
         self._model = AutoModelForCausalLM.from_pretrained(
             checkpoint,
-            model_type=self.config["config"]["model_type"],
-            gpu_layers=self.config["config"]["gpu_layers"],
+            model_type=llm_config["model_type"],
+            gpu_layers=llm_config["gpu_layers"],
+            context_length=llm_config["context_length"],
         )
 
     def fits_in_one_prompt(self, token_count: int) -> bool:
-        return token_count < self.config["config"]["max_tokens"]
+        return token_count < self.config["config"]["context_length"]
 
     def count_tokens(self, source_text: str) -> int:
         return len(self._model.tokenize(source_text))
