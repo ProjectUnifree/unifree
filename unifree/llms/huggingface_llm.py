@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-import re
 from typing import Optional, List, Dict
 
 import ctransformers
-from ctransformers import AutoModelForCausalLM, AutoTokenizer
+from ctransformers import AutoModelForCausalLM
 
 from unifree import LLM, QueryHistoryItem, log
 

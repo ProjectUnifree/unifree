@@ -24,17 +24,12 @@ prompts:
     ${CODE}
 
 llm:
-  class: MultiprocessLocalLLM
-  wrapper_config:
-    num_workers: 3
-    query_timeout_sec: 300
-  llm_config:
-    class: HuggingfaceLLM
-    config:
-      checkpoint: TheBloke/CodeLlama-34B-Instruct-GGUF
-      max_tokens: 256
-      model_type: llama
-      gpu_layers: 50
+  class: HuggingfaceLLM
+  config:
+    checkpoint: TheBloke/CodeLlama-34B-Instruct-GGUF
+    max_tokens: 256
+    model_type: llama
+    gpu_layers: 50
 
 source:
   ignore_locations: # These locations will not be included in migration
