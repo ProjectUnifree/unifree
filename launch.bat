@@ -72,7 +72,7 @@ goto Start
         if !errorlevel! neq 0 (
             echo "Please install Microsoft C++ Build Tools and try again."
         ) else (
-            echo "Installing Microsoft C++ Build Tools ..."
+            echo "Installing Microsoft C++ Build Tools..."
             winget install Microsoft.VisualStudio.2022.BuildTools --override "--wait --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"
         )
 
