@@ -66,12 +66,11 @@ goto Start
     :: Check for C++ build tools. 'cl' is the C++ compiler.
     where cl >nul 2>&1
     if !errorlevel! neq 0 (
-        echo "Microsoft C++ build tools not found."
+        echo "Microsoft C++ Build Tools not found."
 
         where winget >nul 2>&1
         if !errorlevel! neq 0 (
-            echo "Microsoft C++ Build Tools not found."
-            echo "Please install them and try again."
+            echo "Please install Microsoft C++ Build Tools and try again."
         ) else (
             echo "Installing Microsoft C++ Build Tools ..."
             winget install Microsoft.VisualStudio.2022.BuildTools --override "--wait --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"
