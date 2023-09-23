@@ -13,7 +13,6 @@ from unifree import log, MigrationStrategy, utils, FileMigrationSpec
 
 
 class ConcurrentMigrationStrategy(MigrationStrategy, ABC):
-
     def __init__(self, config: Dict) -> None:
         super().__init__(config)
 
@@ -29,10 +28,10 @@ class CreateMigrations(ConcurrentMigrationStrategy):
     _errors: List[str]
 
     def __init__(
-            self,
-            source_path: str,
-            destination_path: str,
-            config: Dict,
+        self,
+        source_path: str,
+        destination_path: str,
+        config: Dict,
     ) -> None:
         super().__init__(config)
 
@@ -65,10 +64,14 @@ class CreateMigrations(ConcurrentMigrationStrategy):
         results = self.map_concurrently(
             self._map_file_path_to_migration,
             project_files,
-            max_workers=self.config["concurrency"]["create_strategy_worker"] if self.config["concurrency"]["create_strategy_worker"] else 1,
-            unit='path',
+            max_workers=self.config["concurrency"]["create_strategy_worker"]
+            if self.config["concurrency"]["create_strategy_worker"]
+            else 1,
+            unit="path",
             chunksize=1,
         )
+
+        log.info("Testing 1")
 
         warnings = []
         for result in results:
@@ -88,7 +91,9 @@ class CreateMigrations(ConcurrentMigrationStrategy):
         absolute_paths = []
 
         ignored_locations = self.config["source"]["ignore_locations"]
-        ignored_locations = [os.path.join(self._source_path, il) for il in ignored_locations] if ignored_locations else []
+        ignored_locations = (
+            [os.path.join(self._source_path, il) for il in ignored_locations] if ignored_locations else []
+        )
 
         # Walk through the folder and its sub-folders
         for root, _, files in os.walk(self._source_path):
@@ -114,7 +119,7 @@ class CreateMigrations(ConcurrentMigrationStrategy):
                     spec = FileMigrationSpec(
                         source_file_path=file_path,
                         source_project_path=self._source_path,
-                        destination_project_path=self._destination_path
+                        destination_project_path=self._destination_path,
                     )
 
                     return self._create_migration_strategy(strategy_name, spec)
@@ -123,7 +128,7 @@ class CreateMigrations(ConcurrentMigrationStrategy):
             return f"'{file_path}' failed to create strategy: {e}"
 
     def _create_migration_strategy(self, strategy_name: str, spec: FileMigrationSpec) -> MigrationStrategy:
-        loaded_class = utils.load_class(strategy_name, 'migration_strategies')
+        loaded_class = utils.load_class(strategy_name, "migration_strategies")
         result = loaded_class(spec, self.config)
         if not isinstance(result, MigrationStrategy):
             raise RuntimeError(f"Loaded {strategy_name} is not a migration strategy")
@@ -132,14 +137,16 @@ class CreateMigrations(ConcurrentMigrationStrategy):
 
     def _initialize_shared_objects(self):
         from unifree.source_code_parsers import CSharpCodeParser
+
         CSharpCodeParser.initialize()
 
         from unifree.known_translations_db import KnownTranslationsDb
+
         KnownTranslationsDb.initialize_instance(self.config)
 
     def _check_if_source_is_unity_project(self):
         files = os.listdir(self._source_path)
-        for required_file in ['Assets', 'ProjectSettings']:
+        for required_file in ["Assets", "ProjectSettings"]:
             if required_file not in files:
                 log.error(f"Unable to find '{required_file}' folder in '{self._source_path}'")
                 raise RuntimeError(f"Source is not a valid Unity project")
@@ -157,9 +164,12 @@ class ExecuteMigrations(ConcurrentMigrationStrategy):
         log.info(f"Executing {len(self._strategies):,} migration strategies...")
 
         results = self.map_concurrently(
-            self._execute_strategy, self._strategies,
-            max_workers=self.config["concurrency"]["execute_strategy_workers"] if self.config["concurrency"]["execute_strategy_workers"] else 1,
-            unit='file',
+            self._execute_strategy,
+            self._strategies,
+            max_workers=self.config["concurrency"]["execute_strategy_workers"]
+            if self.config["concurrency"]["execute_strategy_workers"]
+            else 1,
+            unit="file",
             chunksize=1,
         )
 
