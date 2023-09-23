@@ -8,9 +8,9 @@ prompts:
     5. If migration is impossible leave "TODO [Migrate]" comment.
     6. Use GDScript best practices.
     7. Convert camelCase variable names and method names to snake_case.
-    8. Unity namespaces should migrate into 'class_name' directive. 
-    9. Unity class should migrate into 'class_name' directive. 
-  
+    8. Unity namespaces should migrate into 'class_name' directive.
+    9. Unity class should migrate into 'class_name' directive.
+
 
   full: |
     Migrate this Unity C# code to GDScript class. Code to migrate:
@@ -27,7 +27,7 @@ prompts:
 llm:
   class: HuggingfaceLLM
   config:
-    checkpoint: TheBloke/CodeLlama-34B-Instruct-GGUF
+    checkpoint: TheBloke/CodeLlama-7B-Instruct-GGUF
     context_length: 4096
     model_type: llama
     gpu_layers: 50
@@ -57,7 +57,7 @@ known_translations:
   embedding_function: krlvi/sentence-t5-base-nlpl-code_search_net
   result_count: 3
   user_request: |
-    Remember this correct translation from Unity: 
+    Remember this correct translation from Unity:
     ```
     ${SOURCE}
     ```
