@@ -68,15 +68,15 @@ sometime in the future. We are currently focusing on Godot, as well as Unreal.
           0.15f,                                         |   position.y = 0.0
           0.15f                                          |   transform.position = position
       );                                                 |   direction = Vector3.ZERO
-    }                                                    | class_name Player:
-                                                         | 
-    private void OnEnable()                              | var sprite_renderer: SpriteRenderer
-    {                                                    | var sprites: Array
-      Vector3 position = transform.position;             | var sprite_index: int
-      position.y = 0f;                                   | 
-      transform.position = position;                     | var strength: float = 5.0
-      direction = Vector3.zero;                          | 
-    }                                                    | var direction: Vector3
+    }                                                    |
+                                                         |
+    private void OnEnable()                              |
+    {                                                    |
+      Vector3 position = transform.position;             |
+      position.y = 0f;                                   |
+      transform.position = position;                     |
+      direction = Vector3.zero;                          |
+    }                                                    |
   }                                                      |
 
 ```
