@@ -2,6 +2,7 @@
 from typing import Optional, List, Dict
 
 from unifree import LLM, QueryHistoryItem, log
+from unifree.utils import get_or_create_global_instance
 
 
 # Copyright (c) Unifree
@@ -31,17 +32,17 @@ class HuggingfaceLLM(LLM):
     def query(self, user: str, system: Optional[str] = None, history: Optional[List[QueryHistoryItem]] = None) -> str:
         prompt = ''
         if system:
-            prompt += "> user: Remember these rules: \n" + system + "\n\n"
-            prompt += "> assistant: Certainly, I will remember and follow these rules. \n\n"
+            prompt += self._to_user_prompt(f"Remember these rules:\n{system}\n")
+            prompt += "\nCertainly, I will remember and follow these rules.\n"
 
         if history:
-            history_str = [f"> {h.role}: {h.content}" for h in history]
-            history_str = "\n\n".join(history_str)
+            for item in history:
+                if item.role == "user":
+                    prompt += self._to_user_prompt(f"\n{item.content}\n")
+                else:
+                    prompt += f"\n{item.content}\n"
 
-            prompt += history_str + "\n\n"
-
-        prompt += "> user: " + user + "\n\n"
-        prompt += "> assistant: "
+        prompt += self._to_user_prompt(f"\n{user}\n")
 
         log.debug(f"\n==== LLM REQUEST ====\n{prompt}\n")
 
@@ -57,15 +58,19 @@ class HuggingfaceLLM(LLM):
         llm_config = self.config["config"]
         checkpoint = llm_config["checkpoint"]
 
-        self._model = AutoModelForCausalLM.from_pretrained(
+        self._model = get_or_create_global_instance(checkpoint, lambda: AutoModelForCausalLM.from_pretrained(
             checkpoint,
             model_type=llm_config["model_type"],
             gpu_layers=llm_config["gpu_layers"],
             context_length=llm_config["context_length"],
-        )
+        ))
 
     def fits_in_one_prompt(self, token_count: int) -> bool:
         return token_count < self.config["config"]["context_length"]
 
     def count_tokens(self, source_text: str) -> int:
         return len(self._model.tokenize(source_text))
+
+    def _to_user_prompt(self, user: str) -> str:
+        prompt_template = self.config["config"]["prompt_template"]
+        return prompt_template.replace("${PROMPT}", user)

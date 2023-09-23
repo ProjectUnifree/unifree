@@ -4,6 +4,7 @@
 # This code is licensed under MIT license (see LICENSE.txt for details)
 
 import os.path
+import traceback
 from abc import ABC
 from typing import List, Union, Dict, Optional, Iterable
 
@@ -120,6 +121,7 @@ class CreateMigrations(ConcurrentMigrationStrategy):
                     return self._create_migration_strategy(strategy_name, spec)
             return None
         except Exception as e:
+            traceback.print_exc()
             return f"'{file_path}' failed to create strategy: {e}"
 
     def _create_migration_strategy(self, strategy_name: str, spec: FileMigrationSpec) -> MigrationStrategy:
