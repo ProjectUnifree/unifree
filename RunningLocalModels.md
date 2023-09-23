@@ -1,6 +1,6 @@
 # Running Local Models
 
-## Install 'unifree' and Active the Environment
+## Install 'unifree' and activate the Python Virtual Environment
 
 ### Linux/MacOS
 
@@ -16,7 +16,7 @@ source venv/bin/activate
 ```
 git clone https://github.com/ProjectUnifree/unifree
 cd unifree
-launch.bat
+.\launch.bat
 .\venv\Scripts\activate.bat
 ```
 
@@ -28,4 +28,4 @@ the inference speed.
 
 ## Use unifree as usual
 
-(See main README.md for usage)[https://github.com/ProjectUnifree/unifree#installation-and-usage]. 
+[See main README.md for usage.](https://github.com/ProjectUnifree/unifree#installation-and-usage) 
