@@ -1,6 +1,6 @@
 # Running Local Models
 
-## Install 'unifree' and activate the Environment
+## Install 'unifree' and activate the Python Virtual Environment
 
 ### Linux/MacOS
 
