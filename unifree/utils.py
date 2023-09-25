@@ -6,8 +6,9 @@
 import importlib
 import os
 import re
+import threading
 from collections import defaultdict
-from typing import Type, Dict, Any
+from typing import Type, Dict, Any, TypeVar, Callable
 
 import yaml
 
@@ -76,3 +77,21 @@ def to_default_dict(d):
 
 def _return_none():
     return None
+
+
+InstanceType = TypeVar('InstanceType')
+
+_global_instances: Dict[str, Any] = {}
+_global_instances_lock: threading.Lock = threading.Lock()
+
+
+def get_or_create_global_instance(name: str, new_instance_creator: Callable[[], InstanceType]) -> InstanceType:
+    global _global_instances
+    global _global_instances_lock
+
+    if name not in _global_instances:
+        with _global_instances_lock:
+            if name not in _global_instances:
+                _global_instances[name] = new_instance_creator()
+
+    return _global_instances[name]

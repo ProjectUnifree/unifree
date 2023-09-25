@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+import sys
 # Copyright (c) Unifree
 # This code is licensed under MIT license (see LICENSE.txt for details)
 
@@ -24,28 +24,29 @@ class MultiprocessLocalLLM(LLM):
           class: <wrapped LLM class>
           config <wrapped LLM config>
 
-        wrapper_config
-          num_workers: 5,
+        wrapper_config:
+          num_workers: 5
           query_timeout_sec: 10
     ```
     """
     _shared_executor: Optional[ProcessPoolExecutor] = None
     _query_timeout_sec: int = 20
 
-    _config: Dict
-    _local_uninitialized_model: Optional[LLM]
+    _local_model: Optional[LLM]
 
     def __init__(self, config: Dict) -> None:
-        super().__init__()
+        super().__init__(config)
 
-        self._config = config
+        self._local_model = None
 
     def initialize(self) -> None:
-        llm_config = self._config["llm_config"]
-        self._local_uninitialized_model = load_llm(llm_config)
+        llm_config = self.config["llm_config"]
+
+        self._local_model = load_llm(llm_config)
+        self._local_model.initialize()
 
     def query(self, user: str, system: Optional[str] = None, history: Optional[List[QueryHistoryItem]] = None) -> str:
-        self.maybe_initialize_shared_executor(self._config)
+        self.maybe_initialize_shared_executor(self.config)
 
         result_future = self._shared_executor.submit(_multi_process_worker_translate, _QueryRequest(
             user=user,
@@ -62,18 +63,19 @@ class MultiprocessLocalLLM(LLM):
             raise RuntimeError(f"LocalLLM query failed: {e}")
 
     def fits_in_one_prompt(self, token_count: int) -> bool:
-        assert self._local_uninitialized_model is not None
-        return self._local_uninitialized_model.fits_in_one_prompt(token_count)
+        assert self._local_model is not None
+        return self._local_model.fits_in_one_prompt(token_count)
 
     def count_tokens(self, source_text: str) -> int:
-        assert self._local_uninitialized_model is not None
-        return self._local_uninitialized_model.count_tokens(source_text)
+        assert self._local_model is not None
+        return self._local_model.count_tokens(source_text)
 
     @classmethod
     def maybe_initialize_shared_executor(cls, config: Dict):
         if not cls._shared_executor:
             wrapper_config = config["wrapper_config"]
             llm_config = config["llm_config"]
+            # cls._shared_executor = ProcessPoolExecutor(
             cls._shared_executor = ProcessPoolExecutor(
                 max_workers=wrapper_config["num_workers"],
                 initializer=_multi_process_worker_init,
@@ -130,8 +132,17 @@ def _multi_process_worker_translate(query: _QueryRequest) -> _QueryResult:
             )
         )
     except Exception as e:
-        log.error(f"Failed to query local LLM: {e}", exc_info=e)
+        import traceback
+        traceback.print_exc(file=sys.stderr)
+
+        log.error(f"Failed to query local LLM: {e}")
         return _QueryResult(
             response='',
             exception=e
+        )
+    except:
+        log.error(f"Failed to query local LLM with unknown exception")
+        return _QueryResult(
+            response='',
+            exception=Exception("Unknown exception")
         )

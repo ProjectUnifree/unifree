@@ -54,6 +54,11 @@ class QueryHistoryItem:
 
 
 class LLM(ABC):
+    _config: Dict
+
+    def __init__(self, config: Dict) -> None:
+        self._config = config
+
     @abstractmethod
     def query(self, user: str, system: Optional[str] = None, history: Optional[List[QueryHistoryItem]] = None) -> str:
         """
@@ -88,3 +93,7 @@ class LLM(ABC):
         :return: Number of tokens
         """
         raise NotImplementedError
+
+    @property
+    def config(self) -> Dict:
+        return self._config

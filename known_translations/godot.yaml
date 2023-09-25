@@ -3,7 +3,7 @@ translations:
     source: |
       variable = {condition} ? (true_statement) : (false_statement);
     target: |
-      variable = {translated_true_statement} if {translated_condition} else "{translated_false_statement}
+      variable = {translated_true_statement} if {translated_condition} else {translated_false_statement}
   # ---------------------------------------------------------------------------------------------------------------------
   - title: Start() Function
     source: |

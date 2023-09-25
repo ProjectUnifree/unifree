@@ -4,6 +4,7 @@
 # This code is licensed under MIT license (see LICENSE.txt for details)
 
 import os.path
+import traceback
 from abc import ABC
 from typing import List, Union, Dict, Optional, Iterable
 
@@ -63,7 +64,9 @@ class CreateMigrations(ConcurrentMigrationStrategy):
 
         log.info(f"Computing migration strategies for {len(project_files):,} files...")
         results = self.map_concurrently(
-            self._map_file_path_to_migration, project_files,
+            self._map_file_path_to_migration,
+            project_files,
+            max_workers=self.config["concurrency"]["create_strategy_worker"] if self.config["concurrency"]["create_strategy_worker"] else 1,
             unit='path',
             chunksize=1,
         )
@@ -118,6 +121,7 @@ class CreateMigrations(ConcurrentMigrationStrategy):
                     return self._create_migration_strategy(strategy_name, spec)
             return None
         except Exception as e:
+            traceback.print_exc()
             return f"'{file_path}' failed to create strategy: {e}"
 
     def _create_migration_strategy(self, strategy_name: str, spec: FileMigrationSpec) -> MigrationStrategy:
@@ -156,6 +160,7 @@ class ExecuteMigrations(ConcurrentMigrationStrategy):
 
         results = self.map_concurrently(
             self._execute_strategy, self._strategies,
+            max_workers=self.config["concurrency"]["execute_strategy_workers"] if self.config["concurrency"]["execute_strategy_workers"] else 1,
             unit='file',
             chunksize=1,
         )
