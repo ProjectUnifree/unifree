@@ -8,6 +8,12 @@ import sys
 import traceback
 
 import unifree
+from enum import Enum
+
+class ExitCode(Enum):
+    EX_SOFTWARE = 70
+    EX_IOERR = 74
+    EX_CONFIG = 78
 
 py_logger = logging.getLogger("lion")
 

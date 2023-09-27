@@ -14,7 +14,7 @@ from unifree import log
 
 class CSharpCodeParser:
     _parser: tree_sitter.Parser
-    _config: Dict
+    _config: Dict[str, any]
 
     def __init__(self, config: Dict) -> None:
         self._config = config
@@ -68,13 +68,26 @@ class CSharpCodeParser:
         c_sharp_library_folder_path = os.path.join(unifree.project_root, 'vendor', 'build', 'libraries')
         return os.path.join(c_sharp_library_folder_path, 'c-sharp.so')
 
-    def _replace_macros_with_comments(self, source_str):
-        result = ''
-        for line in source_str.split("\n"):
-            stripped_line = line.rstrip().lstrip()
-            if stripped_line.startswith("#"):
-                result += "// " + line + "\n"
-            else:
-                result += line + "\n"
+    @classmethod
+    def _find_vendor_folder(cls, current_folder_path: str, remaining_depth: int) -> str:
+        if remaining_depth <= 0:
+            log.error("Unable to locate 'vendor' folder that is necessary for reading the code. Please make sure your project is setup correctly")
+            raise RuntimeError(f"Can't locate 'vendor' folder")
 
-        return result
+        if os.path.isdir(current_folder_path):
+            for file_name in os.listdir(current_folder_path):
+                if os.path.isdir(os.path.join(current_folder_path, file_name)) and file_name == 'vendor':
+                    return current_folder_path
+
+        return cls._find_vendor_folder(os.path.dirname(current_folder_path), remaining_depth - 1)
+
+    def _replace_macros_with_comments(self, source_str : str) -> str:
+        result = []
+        lines = [line.strip() for line in source_str.split("\n") if line.strip() != '']
+        for line in lines:
+            if line.startswith("#"):
+                result.append("// " + line)
+            else:
+                result.append(line)
+
+        return "\n".join(result)
