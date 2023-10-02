@@ -110,7 +110,6 @@ assert_dependencies_installed() {
     if is_cmd_installed "${PYTHON_CMD}"; then
         print_red "Python is not installed. Please install python and try again."
     fi
-
     if ! "${PYTHON_CMD}" -c "import venv"; then
         print_red "Python venv is not installed. Please install python venv and try again."
     fi
@@ -199,6 +198,7 @@ print_delimiter
 # Get the absolute path of the directory where this script is located
 SRC_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
+
 if is_already_cloned_repo "$SRC_DIR"; then
     export DEFAULT_CLONE_DIR="${SRC_DIR}"
 else
@@ -208,14 +208,23 @@ fi
 setup_defaults "${SRC_DIR}" "${DEFAULT_CLONE_DIR}"
 export INSTALL_DIR="$(remove_trailing_slash_if_needed ${INSTALL_DIR})"
 export CLONE_DIR="$(remove_trailing_slash_if_needed ${CLONE_DIR})"
+SCRIPT_DIR="${CLONE_DIR}/scripts"
 
 install_and_activate_venv_if_needed
 
 print_delimiter
 
 # Exit if arguments aren't defined.
-if [[ -z "${ORIGIN_DIR}" ]]; then
+# Check if any arguments were supplied and launch wizard if not
+WIZARD_FILE_DIR="${SCRIPT_DIR}/wizard.sh"
+if [[ $# -eq 0 ]]; then
+    if [[ ! -f $WIZARD_FILE_DIR ]]; then
+        print_red "Cannot locate ${WIZARD_FILE_DIR}.\nPlease make sure all script files are present."
+    fi
+    . "$WIZARD_FILE_DIR"
+elif [[ -z "${ORIGIN_DIR}" ]]; then
     print_green "Installing only, run with ./launch.sh <config_name> <source_directory> <destination_directory>."
+    print_green "You can also run using the wizard with: ./launch.sh"
     exit 0
 fi
 
